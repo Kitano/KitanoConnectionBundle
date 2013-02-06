@@ -14,9 +14,11 @@
             </call>
         </service>
         
-        <service id="kitano.connection.listener.doctrine" class="%armetiz.media.listener.doctrine.class%" public="false">
-            <argument type="service" id="kitano.connection.manager" />
-            <tag name="doctrine.event_listener" event="preRemove" method="preRemove"/>
+        <service id="kitano.connection.listener.doctrine" class="%kitano.connection.listener.doctrine.class%" public="false">
+            <call method="setConnectionManager">
+                <argument type="service" id="kitano.connection.manager"/>
+            </call>
+            <tag name="doctrine.event_listener" />
         </service>
     </services>
 </container>

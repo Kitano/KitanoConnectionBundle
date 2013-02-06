@@ -146,7 +146,7 @@ class ConnectionManager
         );
     }
     
-    public function setDispatch(EventDispatcherInterface $dispatcher)
+    public function setDispatcher(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }

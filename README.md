@@ -11,3 +11,11 @@ For instance, a connection may represent:
 * in fact, any relation between any root objects which need to be connected for any reason ;-)
 
 The purpose of this bundle is not to get a ready-to-use implementation but at the minimum a code base to ease the integration of such a system in a Symfony 2 application.
+
+
+License
+-------
+
+This bundle is under the MIT license. See the complete license in the bundle:
+
+    Resources/meta/LICENSE

@@ -16,4 +16,5 @@ composer.phar
 composer.lock
 
 *.swp
+.idea
 

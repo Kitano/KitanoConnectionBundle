@@ -6,14 +6,23 @@ use Kitano\ConnectionBundle\Model\Connection;
 use Kitano\ConnectionBundle\Manager\ConnectionManagerInterface;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Common\EventSubscriber;
 
-class DoctrineListener
+class DoctrineListener implements  EventSubscriber
 {
     /**
      *
      * @var \Kitano\ConnectionBundle\Manager\ConnectionManagerInterface
      */
     protected $connectionManager;
+
+
+    public function getSubscribedEvents()
+    {
+        return array(
+            'preRemove'
+        );
+    }
     
     /**
      * 
