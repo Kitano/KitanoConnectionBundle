@@ -5,12 +5,18 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="kitano.connection.manager.class">Kitano\ConnectionBundle\Manager\ConnectionManager</parameter>
+        <parameter key="kitano.connection.listener.doctrine.class">Kitano\ConnectionBundle\Listener\DoctrineListener</parameter>
     </parameters>
     <services>
         <service id="kitano.connection.manager" class="%kitano.connection.manager.class%">
             <call method="setDispatcher">
                 <argument type="service" id="event_dispatcher" on-invalid="ignore"/>
             </call>
+        </service>
+        
+        <service id="kitano.connection.listener.doctrine" class="%armetiz.media.listener.doctrine.class%" public="false">
+            <argument type="service" id="kitano.connection.manager" />
+            <tag name="doctrine.event_listener" event="preRemove" method="preRemove"/>
         </service>
     </services>
 </container>
