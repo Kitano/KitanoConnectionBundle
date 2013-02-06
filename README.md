@@ -11,4 +11,7 @@ For instance, a connection may represent:
 The purpose of this bundle is not to get a ready-to-use implementation but at the minimum a code base to ease the integration of such a system in a Symfony 2 application.
 
 
-
+TODO
+----
+Listener to fulfill Model/Connection
+Is ConnectionManager::deconnection() method is really needed ?
