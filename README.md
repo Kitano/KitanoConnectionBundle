@@ -1,4 +1,4 @@
 ConnectionBundle
 ================
 
-Implementation of a directed Graph
+Implementation of a simple directed Graph

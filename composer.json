@@ -1,0 +1,28 @@
+{
+    "name": "kitano/connection-bundle",
+    "type": "symfony-bundle",
+    "description": "Implementation of a simple directed Graph",
+    "keywords": ["Kitano", "Connection"],
+    "homepage": "",
+    "license": "",
+    "authors": [
+        {
+            "name": "Thomas Tourlourat",
+            "email": "thomas@tourlourat.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/framework-bundle": ">=2.1"
+        
+    },
+    "autoload": {
+        "psr-0": { "Kitano\\ConnectionBundle": "" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    },
+    "target-dir": "Kitano/ConnectionBundle"
+}
