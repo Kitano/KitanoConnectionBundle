@@ -15,6 +15,8 @@ interface ConnectionManagerInterface
     
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $types = array());
     
+    public function hasConnections(NodeInterface $value, array $types = array(), array $filters = array());
+    
     public function getConnectionsTo(NodeInterface $value, array $types = array(), array $filters = array());
     
     public function getConnectionsFrom(NodeInterface $value, array $types = array(), array $filters = array());

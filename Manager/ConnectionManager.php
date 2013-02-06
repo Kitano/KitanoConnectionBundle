@@ -4,6 +4,8 @@ namespace Kitano\ConnectionBundle\Manager;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Kitano\ConnectionBundle\ConnectionRepositoryInterface;
+
 use Kitano\ConnectionBundle\Event\ConnectionEvent;
 
 use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
@@ -14,6 +16,11 @@ use Kitano\ConnectionBundle\Model\NodeInterface;
 
 class ConnectionManager
 {
+    /**
+     * @var \Kitano\ConnectionBundle\ConnectionRepositoryInterface
+     */
+    protected $connectionRepository;
+    
     protected $dispatcher;
     /**
      * 
@@ -28,7 +35,13 @@ class ConnectionManager
         $connection->setDestination($destination);
         $connection->setType($type);
         
-        return $this->connect($connection);
+        $this->getConnectionRepository()->connect($connection);
+        
+        if($this->dispatcher) {
+            $this->dispatcher->dispatch (ConnectionEvent::CONNECTED, new ConnectionEvent(($connection)));
+        }
+        
+        return $connection;
     }
     
     /**
@@ -41,6 +54,8 @@ class ConnectionManager
         if($this->areConnected($connection->getSource(), $connection->getDestination())) {
             throw new AlreadyConnectedException();
         }
+        
+        $this->getConnectionRepository()->connect($connection);
         
         if($this->dispatcher) {
             $this->dispatcher->dispatch (ConnectionEvent::CONNECTED, new ConnectionEvent(($connection)));
@@ -60,11 +75,24 @@ class ConnectionManager
             throw new NotConnectedException();
         }
         
+        $this->getConnectionRepository()->disconnect($connection);
+        
         if($this->dispatcher) {
             $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent(($connection)));
         }
         
         return $this;
+    }
+    
+    /**
+     * 
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $value
+     * @param array $types
+     * @param array $filters
+     */
+    public function hasConnections(NodeInterface $value, array $types = array(), array $filters = array())
+    {
+        return count($this->getConnections($value, $types, $filters) > 0);
     }
     
     /**
@@ -88,7 +116,7 @@ class ConnectionManager
      */
     public function getConnectionsTo(NodeInterface $value, array $types = array(), array $filters = array())
     {
-        return array();
+        return $this->getConnectionRepository()->getConnectionsWithDestination($value);
     }
     
     /**
@@ -100,7 +128,7 @@ class ConnectionManager
      */
     public function getConnectionsFrom(NodeInterface $value, array $types = array(), array $filters = array())
     {
-        return array();
+        return $this->getConnectionRepository()->getConnectionsWithSource($value);
     }
     
     /**
@@ -112,7 +140,10 @@ class ConnectionManager
      */
     public function getConnections(NodeInterface $value, array $types = array(), array $filters = array())
     {
-        return array();
+        return array_merge(
+            $this->getConnectionsFrom($value, $types, $filters),
+            $this->getConnectionsTo($value, $types, $filters)
+        );
     }
     
     public function setDispatch(EventDispatcherInterface $dispatcher)
@@ -123,5 +154,15 @@ class ConnectionManager
     public function getDispatch()
     {
         return $this->dispatcher;
+    }
+    
+    public function setConnectionRepository(ConnectionRepositoryInterface $connectionRepository)
+    {
+        $this->connectionRepository = $connectionRepository;
+    }
+    
+    public function getConnectionRepository()
+    {
+        return $this->connectionRepository;
     }
 }
