@@ -4,12 +4,12 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
-        <parameter key="kitano.connection.manager.class">Kitano\ConnectionBundle\ConnectionManager</parameter>
+        <parameter key="kitano.connection.manager.class">Kitano\ConnectionBundle\Manager\ConnectionManager</parameter>
     </parameters>
     <services>
         <service id="kitano.connection.manager" class="%kitano.connection.manager.class%">
-            <call method="setObjectManager">
-                <argument type="service" id="doctrine.orm.entity_manager" />
+            <call method="setDispatcher">
+                <argument type="service" id="event_dispatcher" on-invalid="ignore"/>
             </call>
         </service>
     </services>

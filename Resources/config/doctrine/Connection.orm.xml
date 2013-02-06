@@ -7,11 +7,12 @@
             <generator strategy="AUTO"/>
         </id>
         
-        <field name="sourceForgeinKey" type="string" column="source_forgein_key" length="255"/>
+        <field name="sourceObjectId" type="string" column="source_forgein_key" length="255"/>
         <field name="sourceObjectClass" type="string" column="source_object_class" length="255"/>
-        <field name="destinationForgeinKey" type="string" column="source_forgein_key" length="255"/>
+        <field name="destinationObjectId" type="string" column="source_forgein_key" length="255"/>
         <field name="destinationObjectClass" type="string" column="source_object_class" length="255"/>
         
+        <field name="type" type="string" column="type" length="255"/>
         <field name="createdAt" type="datetime" column="created_at" />
         <field name="connectedAt" type="datetime" column="connected_at" />
         <field name="disconnectedAt" type="datetime" column="disconnected_at" />

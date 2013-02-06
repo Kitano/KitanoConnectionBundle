@@ -7,15 +7,18 @@ class Connection
     const STATUS_DISCONNECTED = 0;
     const STATUS_CONNECTED = 1;
     
-    protected $sourceObjectClass;
-    protected $sourceForgeinKey;
-    protected $destinationObjectClass;
-    protected $destinationForgeinKey;
+    protected $source;
+    protected $destination;
     
     /**
      * @var int
      */
     protected $status;
+    
+    /**
+     * @var string
+     */
+    protected $type;
     
     /**
      * @var \DateTime
@@ -37,50 +40,26 @@ class Connection
         $this->createdAt = new \DateTime();
     }
     
-    public function getSourceObjectClass()
+    public function getSource()
     {
-        return $this->sourceObjectClass;
+        return $this->source;
     }
     
-    public function setSourceObjectClass($value) 
+    public function setSource($source) 
     {
-        $this->sourceObjectClass = $value;
+        $this->source= $source;
         
         return $this;
     }
     
-    public function getSourceForeignKey()
+    public function getDestination()
     {
-        return $this->sourceForeignKey;
+        return $this->destination;
     }
     
-    public function setSourceForeignKey($value) 
+    public function setDestination($destination) 
     {
-        $this->sourceForeignKey = $value;
-        
-        return $this;
-    }
-    
-    public function getDestinationObjectClass()
-    {
-        return $this->destinationObjectClass;
-    }
-    
-    public function setDestinationObjectClass($value) 
-    {
-        $this->destinationObjectClass = $value;
-        
-        return $this;
-    }
-    
-    public function getDestinationForeignKey()
-    {
-        return $this->destinationForeignKey;
-    }
-    
-    public function setDestinationForeignKey($value) 
-    {
-        $this->destinationForeignKey = $value;
+        $this->destination= $destination;
         
         return $this;
     }
@@ -90,9 +69,9 @@ class Connection
         return $this->status;
     }
     
-    public function setStatus($value) 
+    public function setStatus($status) 
     {
-        switch($value) {
+        switch($status) {
             case self::STATUS_DISCONNECTED :
                 $this->disconnect();
                 break;
@@ -100,8 +79,20 @@ class Connection
                 $this->connect();
                 break;
             default :
-                throw new \InvalidArgumentException(sprintf('"%s" is not a valid status.', $value));
+                throw new \InvalidArgumentException(sprintf('"%s" is not a valid status.', $status));
         }
+        
+        return $this;
+    }
+    
+    public function getType() 
+    {
+        return $this->type;
+    }
+    
+    public function setType($type) 
+    {
+        $this->type = $type;
         
         return $this;
     }
