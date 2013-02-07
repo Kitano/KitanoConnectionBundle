@@ -2,7 +2,9 @@
 
 namespace Kitano\ConnectionBundle\Proxy;
 
-class Connection
+use Kitano\ConnectionBundle\Model\Connection as ConnectionModel;
+
+class Connection extends ConnectionModel
 {
     protected $sourceObjectClass;
     protected $sourceObjectId;
