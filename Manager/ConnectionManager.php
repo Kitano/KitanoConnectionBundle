@@ -2,6 +2,7 @@
 
 namespace Kitano\ConnectionBundle\Manager;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Kitano\ConnectionBundle\ConnectionRepositoryInterface;
@@ -21,9 +22,12 @@ class ConnectionManager
      */
     protected $connectionRepository;
     
-    protected $dispatcher;
     /**
-     * 
+     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     */
+    protected $dispatcher;
+    
+    /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
      * @return \Kitano\ConnectionBundle\Model\Connection
@@ -45,7 +49,17 @@ class ConnectionManager
     }
     
     /**
-     * 
+     * @param \Kitano\ConnectionBundle\Model\Connection $connection
+     * @return \Kitano\ConnectionBundle\Manager\ConnectionManager
+     */
+    public function destroy(Connection $connection)
+    {
+        $this->getConnectionRepository()->destory($connection);
+        
+        return $this;
+    }
+    
+    /**
      * @param \Kitano\ConnectionBundle\Model\Connection $connection
      * @return \Kitano\ConnectionBundle\Manager\ConnectionManager
      */
@@ -83,84 +97,102 @@ class ConnectionManager
         
         return $this;
     }
-    
-    /**
-     * 
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $value
-     * @param array $types
-     * @param array $filters
-     */
-    public function hasConnections(NodeInterface $value, array $types = array(), array $filters = array())
-    {
-        return count($this->getConnections($value, $types, $filters) > 0);
-    }
-    
+ 
     /**
      * 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
-     * @param type $type
+     * @param array $filters
      * @return boolean
      */
-    public function areConnected(NodeInterface $source, NodeInterface $destination, array $types = array())
+    public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
         return false;
     }
     
     /**
      * 
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $value
-     * @param type $type
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
-     * @return type
+     * @return boolean
      */
-    public function getConnectionsTo(NodeInterface $value, array $types = array(), array $filters = array())
+    public function hasConnections(NodeInterface $node, array $filters = array())
     {
-        return $this->getConnectionRepository()->getConnectionsWithDestination($value);
+        return count($this->getConnections($node, $filters) > 0);
+    }
+
+    /**
+     * 
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
+     * @param array $filters
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getConnectionsTo(NodeInterface $node, array $filters = array())
+    {
+        return $this->getConnectionRepository()->getConnectionsWithDestination($node, $filters);
+    }
+
+    /**
+     * 
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
+     * @param array $filters
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getConnectionsFrom(NodeInterface $node, array $filters = array())
+    {
+        return $this->getConnectionRepository()->getConnectionsWithSource($node, $filters);
     }
     
     /**
      * 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $value
-     * @param type $type
      * @param array $filters
-     * @return type
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
-    public function getConnectionsFrom(NodeInterface $value, array $types = array(), array $filters = array())
+    public function getConnections(NodeInterface $node, array $filters = array())
     {
-        return $this->getConnectionRepository()->getConnectionsWithSource($value);
+        $connectionsFrom = $this->getConnectionsFrom($node, $filters);
+        $connectionsTo = $this->getConnectionsTo($node, $filters);
+        
+        if(null === $connectionsFrom && null === $connectionsTo) {
+            return null;
+        }
+        else {
+            return new ArrayCollection(array_merge((array) $connectionsFrom, (array) $connectionsTo));
+        }
     }
     
     /**
      * 
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $value
-     * @param type $type
-     * @param array $filters
-     * @return type
+     * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
-    public function getConnections(NodeInterface $value, array $types = array(), array $filters = array())
-    {
-        return array_merge(
-            $this->getConnectionsFrom($value, $types, $filters),
-            $this->getConnectionsTo($value, $types, $filters)
-        );
-    }
-    
     public function setDispatcher(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
     
+    /**
+     * 
+     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
+     */
     public function getDispatch()
     {
         return $this->dispatcher;
     }
     
+    /**
+     * 
+     * @param \Kitano\ConnectionBundle\ConnectionRepositoryInterface $connectionRepository
+     */
     public function setConnectionRepository(ConnectionRepositoryInterface $connectionRepository)
     {
         $this->connectionRepository = $connectionRepository;
     }
     
+    /**
+     * 
+     * @return \Kitano\ConnectionBundle\ConnectionRepositoryInterface $connectionRepository
+     */
     public function getConnectionRepository()
     {
         return $this->connectionRepository;
