@@ -22,6 +22,13 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
         $this->connectionManager = new ConnectionManager();
         $this->connectionManager->setConnectionRepository($connectionRepository);
     }
+    public function getFiltersBag()
+    {
+        return array(
+            array('status' => Connection::STATUS_CONNECTED, 'type' =>'like'),
+            array('status')
+        );
+    }
 
     public function tearDown()
     {
@@ -89,5 +96,10 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
         
         $this->assertNotNull($connectionsOnB);
         $this->assertContains($connection, $connectionsOnB->getIterator());
+    }
+
+    public function testValidateFilters()
+    {
+
     }
 }

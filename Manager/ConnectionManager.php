@@ -11,6 +11,7 @@ use Kitano\ConnectionBundle\Event\ConnectionEvent;
 
 use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
 use Kitano\ConnectionBundle\Exception\NotConnectedException;
+use Kitano\ConnectionBundle\Exception\InvalidFilterException;
 
 use Kitano\ConnectionBundle\Proxy\Connection;
 use Kitano\ConnectionBundle\Model\NodeInterface;
@@ -174,7 +175,78 @@ class ConnectionManager
             return new ArrayCollection(array_merge((array) $connectionsFrom, (array) $connectionsTo));
         }
     }
-    
+
+    protected function validateFilters(array &$filters)
+    {
+        $allowedFilters = array(
+            'status' => array(
+                'allowed_values' => array(
+                    Connection::STATUS_CONNECTED,
+                    Connection::STATUS_DISCONNECTED
+                )
+            ),
+            'type' => array(
+                'constraints' => array(
+                    'NotNull'
+                )
+            ),
+            'depth' => array(
+                'constraints' => array(
+                    'integer'
+                ),
+                'default' => 1
+            ),
+        );
+
+        $filters = array_intersect_key($filters, $allowedFilters);
+
+        if(!empty($filters)) {
+            foreach($allowedFilters as $filterName => $rules)
+            {
+                if(!array_key_exists($filterName, $filters)) {
+                    continue;
+                }
+
+                // test allowed values
+                if(array_key_exists('allowed_values', $allowedFilters[$filterName]))
+                {
+                    if(!in_array($filters[$filterName], $allowedFilters[$filterName]['allowed_values'])) {
+                        throw new InvalidFilterException(); // invalid expected parameter
+                    }
+                }
+
+                //test constraints
+                if(array_key_exists('constraints', $allowedFilters[$filterName]))
+                {
+                    switch($allowedFilters[$filterName]['constraints'])
+                    {
+                        case 'NotNull' :
+                            if(!array_key_exists($filters[$filterName], $filters)) {
+                                throw new InvalidFilterException(); // mandatory parameter not here
+                            }
+                            break;
+
+                        case 'integer' :
+                            if(!is_integer($filters[$filterName])) {
+                                throw new InvalidFilterException(); // unexpected type exception ?
+                            }
+                            break;
+                    }
+                }
+
+                //test defaults values
+                if(array_key_exists('default', $allowedFilters[$filterName]))
+                {
+                    if(!isset($filters[$filterName])) {
+                        $filters[$filterName] = $allowedFilters[$filterName]['default'];
+                    }
+                }
+            }
+        } else {
+            throw new InvalidFilterException();
+        }
+    }
+
     /**
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
