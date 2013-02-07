@@ -61,7 +61,7 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
-     * @return \Kitano\ConnectionBundle\Entity\Connection
+     * @return \Kitano\ConnectionBundle\Proxy\Connection
      */
     public function connect(Connection $connection)
     {
@@ -83,7 +83,7 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
-     * @return \Kitano\ConnectionBundle\Entity\Connection
+     * @return \Kitano\ConnectionBundle\Proxy\Connection
      */
     public function disconnect(Connection $connection)
     {
@@ -100,6 +100,17 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
         $this->_em->flush();
         
         return $connection;
+    }
+    
+    /**
+     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
+     */
+    public function destroy(Connection $connection)
+    {
+        $this->_em->remove($connection);
+        $this->_em->flush();
+        
+        return $this;
     }
     
     /**

@@ -10,4 +10,5 @@ class ConnectionRepositoryInterface
     public function getConnectionsWithDestination($objectClass, $objectId);
     public function connect(Connection $connection);
     public function disconnect(Connection $connection);
+    public function destroy(Connection $connection);
 }
