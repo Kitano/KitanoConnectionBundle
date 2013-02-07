@@ -3,8 +3,9 @@
 namespace Kitano\ConnectionBundle;
 
 use Kitano\ConnectionBundle\Proxy\Connection;
+use Kitano\ConnectionBundle\Model\NodeInterface;
 
-class ConnectionRepositoryInterface
+interface ConnectionRepositoryInterface
 {
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
@@ -21,20 +22,19 @@ class ConnectionRepositoryInterface
     public function getConnectionsWithDestination(NodeInterface $node, array $filters = array());
     
     /**
-     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
-     * @return \Kitano\ConnectionBundle\Proxy\Connection
+     * @param \Kitano\ConnectionBundle\Model\Connection $connection
+     * @return \Kitano\ConnectionBundle\Model\Connection
      */
-    public function connect(Connection $connection);
+    public function update(Connection $connection);
     
     /**
-     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
-     * @return \Kitano\ConnectionBundle\Proxy\Connection
-     */
-    public function disconnect(Connection $connection);
-    
-    /**
-     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
-     * @return \Kitano\ConnectionBundle\Entity\ConnectionRepository
+     * @param \Kitano\ConnectionBundle\Model\Connection $connection
+     * @return \Kitano\ConnectionBundle\ConnectionRepositoryInterface
      */
     public function destroy(Connection $connection);
+    
+    /**
+     * @return \Kitano\ConnectionBundle\Model\Connection
+     */
+    public function createEmptyConnection();
 }

@@ -71,10 +71,10 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
-     * @return \Kitano\ConnectionBundle\Proxy\Connection
+     * @param \Kitano\ConnectionBundle\Model\Connection $connection
+     * @return \Kitano\ConnectionBundle\Model\Connection
      */
-    public function connect(Connection $connection)
+    public function update(Connection $connection)
     {
         $sourceInformations = $this->extractInformations($this->getSource());
         $destinationInformations = $this->extractInformations($this->getDestination());
@@ -83,7 +83,6 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
         $connection->setSourceObjectClass($sourceInformations["object_class"]);
         $connection->setDestinationObjectId($destinationInformations["object_id"]);
         $connection->setDestinationObjectClass($destinationInformations["object_class"]);
-        $connection->connect();
         
         $this->_em->persist($connection);
         $this->_em->flush();
@@ -92,29 +91,8 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
-     * @return \Kitano\ConnectionBundle\Proxy\Connection
-     */
-    public function disconnect(Connection $connection)
-    {
-        $sourceInformations = $this->extractInformations($this->getSource());
-        $destinationInformations = $this->extractInformations($this->getDestination());
-        
-        $connection->setSourceObjectId($sourceInformations["object_id"]);
-        $connection->setSourceObjectClass($sourceInformations["object_class"]);
-        $connection->setDestinationObjectId($destinationInformations["object_id"]);
-        $connection->setDestinationObjectClass($destinationInformations["object_class"]);
-        $connection->disconnect();
-        
-        $this->_em->persist($connection);
-        $this->_em->flush();
-        
-        return $connection;
-    }
-    
-    /**
-     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
-     * @return \Kitano\ConnectionBundle\Entity\ConnectionRepository
+     * @param \Kitano\ConnectionBundle\Model\Connection $connection
+     * @return \Kitano\ConnectionBundle\ConnectionRepositoryInterface
      */
     public function destroy(Connection $connection)
     {
@@ -122,6 +100,14 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
         $this->_em->flush();
         
         return $this;
+    }
+    
+    /**
+     * @return \Kitano\ConnectionBundle\Model\Connection
+     */
+    public function createEmptyConnection()
+    {
+        return new \Kitano\ConnectionBundle\Entity\Connection();
     }
     
     /**

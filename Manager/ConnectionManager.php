@@ -12,7 +12,7 @@ use Kitano\ConnectionBundle\Event\ConnectionEvent;
 use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
 use Kitano\ConnectionBundle\Exception\NotConnectedException;
 
-use Kitano\ConnectionBundle\Model\Connection;
+use Kitano\ConnectionBundle\Proxy\Connection;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 
 class ConnectionManager
@@ -34,12 +34,17 @@ class ConnectionManager
      */
     public function create(NodeInterface $source, NodeInterface $destination, $type)
     {
-        $connection = new Connection();
+        if($this->areConnected($source, $destination)) {
+            throw new AlreadyConnectedException();
+        }
+        
+        $connection = $this->getConnectionRepository()->createEmptyConnection();
         $connection->setSource($source);
         $connection->setDestination($destination);
         $connection->setType($type);
+        $connection->connect();
         
-        $this->getConnectionRepository()->connect($connection);
+        $this->getConnectionRepository()->update($connection);
         
         if($this->dispatcher) {
             $this->dispatcher->dispatch (ConnectionEvent::CONNECTED, new ConnectionEvent(($connection)));
@@ -54,7 +59,17 @@ class ConnectionManager
      */
     public function destroy(Connection $connection)
     {
-        $this->getConnectionRepository()->destory($connection);
+        if(!$this->areConnected($connection->getSource(), $connection->getDestination())) {
+            throw new NotConnectedException();
+        }
+        
+        $connection->disconnect();
+        
+        if($this->dispatcher) {
+            $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent(($connection)));
+        }
+        
+        $this->getConnectionRepository()->destroy($connection);
         
         return $this;
     }
@@ -69,7 +84,9 @@ class ConnectionManager
             throw new AlreadyConnectedException();
         }
         
-        $this->getConnectionRepository()->connect($connection);
+        $connection->connect();
+        
+        $this->getConnectionRepository()->update($connection);
         
         if($this->dispatcher) {
             $this->dispatcher->dispatch (ConnectionEvent::CONNECTED, new ConnectionEvent(($connection)));
@@ -88,7 +105,9 @@ class ConnectionManager
             throw new NotConnectedException();
         }
         
-        $this->getConnectionRepository()->disconnect($connection);
+        $connection->disconnect();
+        
+        $this->getConnectionRepository()->update($connection);
         
         if($this->dispatcher) {
             $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent(($connection)));
