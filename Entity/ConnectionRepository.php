@@ -19,7 +19,7 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
-     * @return type
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function getConnectionsWithSource(NodeInterface $node, array $filters = array())
     {
@@ -34,13 +34,19 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
         $queryBuilder->setParameter("objectClass", $objectClass);
         $queryBuilder->setParameter("objectId", $objectId);
         
-        return $queryBuilder->getQuery()->getResult();
+        $connections = $queryBuilder->getQuery()->getResult();
+        
+        foreach($connections as $connection) {
+            $this->fillConnection($connection);
+        }
+        
+        return $connections;
     }
-    
+
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
-     * @return type
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function getConnectionsWithDestination(NodeInterface $node, array $filters = array())
     {
@@ -55,7 +61,13 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
         $queryBuilder->setParameter("objectClass", $objectClass);
         $queryBuilder->setParameter("objectId", $objectId);
         
-        return $queryBuilder->getQuery()->getResult();
+        $connections = $queryBuilder->getQuery()->getResult();
+        
+        foreach($connections as $connection) {
+            $this->fillConnection($connection);
+        }
+        
+        return $connections;
     }
     
     /**
@@ -124,5 +136,20 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
             'object_class' => $classMetadata->getName(),
             'object_id' => $classMetadata->getIdentifierValues($node),
         );
+    }
+    
+    /**
+     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
+     * @return \Kitano\ConnectionBundle\Proxy\Connection
+     */
+    protected function fillConnection (Connection $connection) 
+    {
+        $source = $this->_em->getRepository($connection->getSourceObjectClass())->find($connection->getSourceObjectId());
+        $destination = $this->_em->getRepository($connection->getDestinationObjectClass())->find($connection->getDestinationObjectId());
+        
+        $connection->setSource($source);
+        $connection->setDestination($destination);
+        
+        return $connection;
     }
 }
