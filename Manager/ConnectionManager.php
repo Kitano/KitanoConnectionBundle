@@ -79,7 +79,6 @@ class ConnectionManager
     }
     
     /**
-     * 
      * @param \Kitano\ConnectionBundle\Model\Connection $connection
      * @return \Kitano\ConnectionBundle\Manager\ConnectionManager
      */
@@ -99,7 +98,6 @@ class ConnectionManager
     }
  
     /**
-     * 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
      * @param array $filters
@@ -111,7 +109,6 @@ class ConnectionManager
     }
     
     /**
-     * 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
      * @return boolean
@@ -122,7 +119,6 @@ class ConnectionManager
     }
 
     /**
-     * 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
      * @return \Doctrine\Common\Collections\ArrayCollection
@@ -133,7 +129,6 @@ class ConnectionManager
     }
 
     /**
-     * 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
      * @return \Doctrine\Common\Collections\ArrayCollection
@@ -144,7 +139,6 @@ class ConnectionManager
     }
     
     /**
-     * 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $value
      * @param array $filters
      * @return \Doctrine\Common\Collections\ArrayCollection
@@ -163,7 +157,6 @@ class ConnectionManager
     }
     
     /**
-     * 
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
     public function setDispatcher(EventDispatcherInterface $dispatcher)
@@ -172,7 +165,6 @@ class ConnectionManager
     }
     
     /**
-     * 
      * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
     public function getDispatch()
@@ -181,7 +173,6 @@ class ConnectionManager
     }
     
     /**
-     * 
      * @param \Kitano\ConnectionBundle\ConnectionRepositoryInterface $connectionRepository
      */
     public function setConnectionRepository(ConnectionRepositoryInterface $connectionRepository)
@@ -190,7 +181,6 @@ class ConnectionManager
     }
     
     /**
-     * 
      * @return \Kitano\ConnectionBundle\ConnectionRepositoryInterface $connectionRepository
      */
     public function getConnectionRepository()
