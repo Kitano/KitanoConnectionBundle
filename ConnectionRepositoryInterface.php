@@ -9,14 +9,14 @@ class ConnectionRepositoryInterface
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
-     * @return type
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function getConnectionsWithSource(NodeInterface $node, array $filters = array());
     
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
-     * @return type
+     * @return \Doctrine\Common\Collections\ArrayCollection
      */
     public function getConnectionsWithDestination(NodeInterface $node, array $filters = array());
     
