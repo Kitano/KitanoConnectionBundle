@@ -17,13 +17,13 @@ use Kitano\ConnectionBundle\Model\NodeInterface;
 class ConnectionRepository extends EntityRepository implements ConnectionRepositoryInterface
 {
     /**
-     * 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @return ArrayCollection
+     * @param array $filters
+     * @return type
      */
-    public function getConnectionsWithSource(NodeInterface $node)
+    public function getConnectionsWithSource(NodeInterface $node, array $filters = array())
     {
-        $objectInformations = $this->extractInformations($this->getSource());
+        $objectInformations = $this->extractInformations($node);
         
         $objectClass = $objectInformations["object_class"];
         $objectId = $objectInformations["object_id"];
@@ -38,13 +38,13 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     }
     
     /**
-     * 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @return ArrayCollection
+     * @param array $filters
+     * @return type
      */
-    public function getConnectionsWithDestination(NodeInterface $node)
+    public function getConnectionsWithDestination(NodeInterface $node, array $filters = array())
     {
-        $objectInformations = $this->extractInformations($this->getSource());
+        $objectInformations = $this->extractInformations($node);
         
         $objectClass = $objectInformations["object_class"];
         $objectId = $objectInformations["object_id"];
@@ -59,8 +59,7 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
+     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
      * @return \Kitano\ConnectionBundle\Proxy\Connection
      */
     public function connect(Connection $connection)
@@ -81,8 +80,7 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
+     * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
      * @return \Kitano\ConnectionBundle\Proxy\Connection
      */
     public function disconnect(Connection $connection)
@@ -104,6 +102,7 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     
     /**
      * @param \Kitano\ConnectionBundle\Proxy\Connection $connection
+     * @return \Kitano\ConnectionBundle\Entity\ConnectionRepository
      */
     public function destroy(Connection $connection)
     {
@@ -114,13 +113,12 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
     }
     
     /**
-     * 
      * @param \Kitano\ConnectionBundle\Entity\NodeInterface $node
      * @return array
      */
     protected function extractInformations(NodeInterface $node)
     {
-        $classMetadata = $this->_em->getClassMetadata(get_class($source));
+        $classMetadata = $this->_em->getClassMetadata(get_class($node));
         
         return array(
             'object_class' => $classMetadata->getName(),
