@@ -208,17 +208,17 @@ class ConnectionManager
                 }
 
                 // test allowed values
-                if(array_key_exists('allowed_values', $allowedFilters[$filterName]))
+                if(array_key_exists('allowed_values', $rules))
                 {
-                    if(!in_array($filters[$filterName], $allowedFilters[$filterName]['allowed_values'])) {
+                    if(!in_array($filters[$filterName], $rules['allowed_values'])) {
                         throw new InvalidFilterException(); // invalid expected parameter
                     }
                 }
 
                 //test constraints
-                if(array_key_exists('constraints', $allowedFilters[$filterName]))
+                if(array_key_exists('constraints', $rules))
                 {
-                    switch($allowedFilters[$filterName]['constraints'])
+                    switch($rules['constraints'])
                     {
                         case 'NotNull' :
                             if(!array_key_exists($filters[$filterName], $filters)) {
@@ -235,10 +235,10 @@ class ConnectionManager
                 }
 
                 //test defaults values
-                if(array_key_exists('default', $allowedFilters[$filterName]))
+                if(array_key_exists('default', $rules))
                 {
                     if(!isset($filters[$filterName])) {
-                        $filters[$filterName] = $allowedFilters[$filterName]['default'];
+                        $filters[$filterName] = $rules['default'];
                     }
                 }
             }
