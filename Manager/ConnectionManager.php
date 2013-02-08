@@ -186,7 +186,7 @@ class ConnectionManager
     /**
      * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
-    public function getDispatch()
+    public function getDispatcher()
     {
         return $this->dispatcher;
     }
