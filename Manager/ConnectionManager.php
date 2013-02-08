@@ -188,7 +188,8 @@ class ConnectionManager
             'type' => array(
                 'constraints' => array(
                     'NotNull'
-                )
+                ),
+                'normalize' => true
             ),
             'depth' => array(
                 'constraints' => array(
@@ -231,6 +232,14 @@ class ConnectionManager
                                 throw new InvalidFilterException(); // unexpected type exception ?
                             }
                             break;
+                    }
+                }
+
+                //normalization : if scalar, transform to array
+                if(array_key_exists('normalize', $rules) && $rules['normalize'] == true)
+                {
+                    if(is_scalar($filters[$filterName])) {
+                        $filters[$filterName] = array($filters[$filterName]);
                     }
                 }
 
