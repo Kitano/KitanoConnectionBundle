@@ -6,11 +6,17 @@
     <parameters>
         <parameter key="kitano.connection.manager.class">Kitano\ConnectionBundle\Manager\ConnectionManager</parameter>
         <parameter key="kitano.connection.listener.doctrine.class">Kitano\ConnectionBundle\Listener\DoctrineListener</parameter>
+        <parameter key="kitano.filter_validator.class">Kitano\ConnectionBundle\Manager\FilterValidator</parameter>
     </parameters>
     <services>
+        <service id="kitano.filter_validator" class="%kitano.filter_validator.class%" public="false" />
+
         <service id="kitano.connection.manager" class="%kitano.connection.manager.class%">
             <call method="setDispatcher">
                 <argument type="service" id="event_dispatcher" on-invalid="ignore"/>
+            </call>
+            <call method="setFilterValidator">
+                <argument type="service" id="kitano.filter_validator" />
             </call>
         </service>
         

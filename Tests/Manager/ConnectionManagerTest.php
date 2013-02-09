@@ -20,7 +20,17 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
                  ->will($this->returnValue(new Connection()));
         
         $this->connectionManager = new ConnectionManager();
+        $this->connectionManager->setFilterValidator($this->getFilterValidatorMock());
         $this->connectionManager->setConnectionRepository($connectionRepository);
+    }
+
+    protected function getFilterValidatorMock()
+    {
+        $mock = $this->getMockBuilder('Kitano\ConnectionBundle\Manager\FilterValidator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $mock;
     }
 
     public function tearDown()

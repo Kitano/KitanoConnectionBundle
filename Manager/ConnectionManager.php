@@ -6,14 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Kitano\ConnectionBundle\ConnectionRepositoryInterface;
-
 use Kitano\ConnectionBundle\Event\ConnectionEvent;
-
-use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
-use Kitano\ConnectionBundle\Exception\NotConnectedException;
-
 use Kitano\ConnectionBundle\Proxy\Connection;
 use Kitano\ConnectionBundle\Model\NodeInterface;
+use Kitano\ConnectionBundle\Manager\FilterValidator;
+use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
+use Kitano\ConnectionBundle\Exception\NotConnectedException;
 
 class ConnectionManager
 {
@@ -26,6 +24,11 @@ class ConnectionManager
      * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
      */
     protected $dispatcher;
+
+    /**
+     * @var \Kitano\ConnectionBundle\Manager\FilterValidator
+     */
+    protected $filterValidator;
     
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
@@ -124,6 +127,8 @@ class ConnectionManager
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         return false;
     }
     
@@ -134,6 +139,8 @@ class ConnectionManager
      */
     public function hasConnections(NodeInterface $node, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         return count($this->getConnections($node, $filters) > 0);
     }
 
@@ -144,6 +151,8 @@ class ConnectionManager
      */
     public function getConnectionsTo(NodeInterface $node, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         return $this->getConnectionRepository()->getConnectionsWithDestination($node, $filters);
     }
 
@@ -154,6 +163,8 @@ class ConnectionManager
      */
     public function getConnectionsFrom(NodeInterface $node, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         return $this->getConnectionRepository()->getConnectionsWithSource($node, $filters);
     }
     
@@ -164,6 +175,8 @@ class ConnectionManager
      */
     public function getConnections(NodeInterface $node, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         $connectionsFrom = $this->getConnectionsFrom($node, $filters);
         $connectionsTo = $this->getConnectionsTo($node, $filters);
         
@@ -174,7 +187,7 @@ class ConnectionManager
             return new ArrayCollection(array_merge((array) $connectionsFrom, (array) $connectionsTo));
         }
     }
-    
+
     /**
      * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
@@ -205,5 +218,23 @@ class ConnectionManager
     public function getConnectionRepository()
     {
         return $this->connectionRepository;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Manager\FilterValidator
+     */
+    public function setFilterValidator(FilterValidator $validator)
+    {
+        $this->filterValidator = $validator;
+
+        return $this;
+    }
+
+    /**
+     * @return \Kitano\ConnectionBundle\Manager\FilterValidator
+     */
+    public function getFilterValidator()
+    {
+        return $this->filterValidator;
     }
 }
