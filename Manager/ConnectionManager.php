@@ -6,15 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Kitano\ConnectionBundle\ConnectionRepositoryInterface;
-
 use Kitano\ConnectionBundle\Event\ConnectionEvent;
-
-use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
-use Kitano\ConnectionBundle\Exception\NotConnectedException;
-use Kitano\ConnectionBundle\Exception\InvalidFilterException;
-
 use Kitano\ConnectionBundle\Proxy\Connection;
 use Kitano\ConnectionBundle\Model\NodeInterface;
+use Kitano\ConnectionBundle\Manager\FilterValidator;
+use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
+use Kitano\ConnectionBundle\Exception\NotConnectedException;
 
 class ConnectionManager
 {
@@ -27,6 +24,11 @@ class ConnectionManager
      * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
      */
     protected $dispatcher;
+
+    /**
+     * @var \Kitano\ConnectionBundle\Manager\FilterValidator
+     */
+    protected $filterValidator;
     
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
@@ -125,6 +127,8 @@ class ConnectionManager
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         return false;
     }
     
@@ -135,6 +139,8 @@ class ConnectionManager
      */
     public function hasConnections(NodeInterface $node, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         return count($this->getConnections($node, $filters) > 0);
     }
 
@@ -145,6 +151,8 @@ class ConnectionManager
      */
     public function getConnectionsTo(NodeInterface $node, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         return $this->getConnectionRepository()->getConnectionsWithDestination($node, $filters);
     }
 
@@ -155,6 +163,8 @@ class ConnectionManager
      */
     public function getConnectionsFrom(NodeInterface $node, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         return $this->getConnectionRepository()->getConnectionsWithSource($node, $filters);
     }
     
@@ -165,6 +175,8 @@ class ConnectionManager
      */
     public function getConnections(NodeInterface $node, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+
         $connectionsFrom = $this->getConnectionsFrom($node, $filters);
         $connectionsTo = $this->getConnectionsTo($node, $filters);
         
@@ -173,86 +185,6 @@ class ConnectionManager
         }
         else {
             return new ArrayCollection(array_merge((array) $connectionsFrom, (array) $connectionsTo));
-        }
-    }
-
-    protected function validateFilters(array &$filters)
-    {
-        $allowedFilters = array(
-            'status' => array(
-                'allowed_values' => array(
-                    Connection::STATUS_CONNECTED,
-                    Connection::STATUS_DISCONNECTED
-                )
-            ),
-            'type' => array(
-                'constraints' => array(
-                    'NotNull'
-                ),
-                'normalize' => true
-            ),
-            'depth' => array(
-                'constraints' => array(
-                    'integer'
-                ),
-                'default' => 1
-            ),
-        );
-
-        $filters = array_intersect_key($filters, $allowedFilters);
-
-        if(!empty($filters)) {
-            foreach($allowedFilters as $filterName => $rules)
-            {
-                if(!array_key_exists($filterName, $filters)) {
-                    continue;
-                }
-
-                // test allowed values
-                if(array_key_exists('allowed_values', $rules))
-                {
-                    if(!in_array($filters[$filterName], $rules['allowed_values'])) {
-                        throw new InvalidFilterException(); // invalid expected parameter
-                    }
-                }
-
-                //test constraints
-                if(array_key_exists('constraints', $rules))
-                {
-                    switch($rules['constraints'])
-                    {
-                        case 'NotNull' :
-                            if(!array_key_exists($filters[$filterName], $filters)) {
-                                throw new InvalidFilterException(); // mandatory parameter not here
-                            }
-                            break;
-
-                        case 'integer' :
-                            if(!is_integer($filters[$filterName])) {
-                                throw new InvalidFilterException(); // unexpected type exception ?
-                            }
-                            break;
-                    }
-                }
-
-                //normalization : if scalar, transform to array
-                if(array_key_exists('normalize', $rules) && $rules['normalize'] == true)
-                {
-                    if(is_scalar($filters[$filterName])) {
-                        $filters[$filterName] = array($filters[$filterName]);
-                    }
-                }
-
-                //test defaults values
-                if(array_key_exists('default', $rules))
-                {
-                    if(!isset($filters[$filterName])) {
-                        $filters[$filterName] = $rules['default'];
-                    }
-                }
-            }
-        } else {
-            throw new InvalidFilterException();
         }
     }
 
@@ -286,5 +218,23 @@ class ConnectionManager
     public function getConnectionRepository()
     {
         return $this->connectionRepository;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Manager\FilterValidator
+     */
+    public function setFilterValidator(FilterValidator $validator)
+    {
+        $this->filterValidator = $validator;
+
+        return $this;
+    }
+
+    /**
+     * @return \Kitano\ConnectionBundle\Manager\FilterValidator
+     */
+    public function getFilterValidator()
+    {
+        return $this->filterValidator;
     }
 }

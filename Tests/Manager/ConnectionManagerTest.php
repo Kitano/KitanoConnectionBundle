@@ -20,14 +20,17 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
                  ->will($this->returnValue(new Connection()));
         
         $this->connectionManager = new ConnectionManager();
+        $this->connectionManager->setFilterValidator($this->getFilterValidatorMock());
         $this->connectionManager->setConnectionRepository($connectionRepository);
     }
-    public function getFiltersBag()
+
+    protected function getFilterValidatorMock()
     {
-        return array(
-            array('status' => Connection::STATUS_CONNECTED, 'type' =>'like'),
-            array('status')
-        );
+        $mock = $this->getMockBuilder('Kitano\ConnectionBundle\Manager\FilterValidator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $mock;
     }
 
     public function tearDown()
@@ -96,10 +99,5 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
         
         $this->assertNotNull($connectionsOnB);
         $this->assertContains($connection, $connectionsOnB->getIterator());
-    }
-
-    public function testValidateFilters()
-    {
-
     }
 }
