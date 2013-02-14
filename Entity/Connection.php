@@ -1,8 +1,8 @@
 <?php
 
-namespace Kitano\ConnectionBundle\Document;
+namespace Kitano\ConnectionBundle\Entity;
 
-use Kitano\ConnectionBundle\Model\Connection as ConnectionProxy;
+use Kitano\ConnectionBundle\Proxy\Connection as ConnectionProxy;
 
 class Connection extends ConnectionProxy
 {
