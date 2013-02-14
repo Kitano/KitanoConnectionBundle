@@ -2,7 +2,6 @@
 
 namespace Kitano\ConnectionBundle\Listener;
 
-use Kitano\ConnectionBundle\Model\Connection;
 use Kitano\ConnectionBundle\Manager\ConnectionManagerInterface;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
