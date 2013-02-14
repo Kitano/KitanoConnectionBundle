@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Kitano\ConnectionBundle\ConnectionRepositoryInterface;
 use Kitano\ConnectionBundle\Event\ConnectionEvent;
-use Kitano\ConnectionBundle\Proxy\Connection;
+use Kitano\ConnectionBundle\Model\Connection;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 use Kitano\ConnectionBundle\Manager\FilterValidator;
 use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
