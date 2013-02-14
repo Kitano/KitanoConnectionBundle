@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity repository-class="Kitano\ConnectionBundle\Model\ConnectionRepository" 
-            name="Kitano\ConnectionBundle\Model\Connection" 
+    <entity repository-class="Kitano\ConnectionBundle\Entity\ConnectionRepository" 
+            name="Kitano\ConnectionBundle\Entity\Connection" 
             table="kitano_connections">
         <id name="id" type="integer" column="id_connection">
             <generator strategy="AUTO"/>
@@ -9,8 +9,8 @@
         
         <field name="sourceObjectId" type="string" column="source_forgein_key" length="255"/>
         <field name="sourceObjectClass" type="string" column="source_object_class" length="255"/>
-        <field name="destinationObjectId" type="string" column="source_forgein_key" length="255"/>
-        <field name="destinationObjectClass" type="string" column="source_object_class" length="255"/>
+        <field name="destinationObjectId" type="string" column="destination_forgein_key" length="255"/>
+        <field name="destinationObjectClass" type="string" column="destination_object_class" length="255"/>
         
         <field name="type" type="string" column="type" length="255"/>
         <field name="createdAt" type="datetime" column="created_at" />
