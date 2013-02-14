@@ -13,7 +13,7 @@ use Kitano\ConnectionBundle\Manager\FilterValidator;
 use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
 use Kitano\ConnectionBundle\Exception\NotConnectedException;
 
-class ConnectionManager
+class ConnectionManager implements ConnectionManagerInterface
 {
     /**
      * @var \Kitano\ConnectionBundle\ConnectionRepositoryInterface
