@@ -24,7 +24,7 @@
             <call method="setConnectionManager">
                 <argument type="service" id="kitano.connection.manager"/>
             </call>
-            <tag name="doctrine.event_listener" />
+            <tag name="doctrine.event_subscriber" />
         </service>
     </services>
 </container>
