@@ -7,8 +7,28 @@
         <parameter key="kitano.connection.manager.class">Kitano\ConnectionBundle\Manager\ConnectionManager</parameter>
         <parameter key="kitano.connection.listener.doctrine.class">Kitano\ConnectionBundle\Listener\DoctrineListener</parameter>
         <parameter key="kitano.filter_validator.class">Kitano\ConnectionBundle\Manager\FilterValidator</parameter>
+        <parameter key="kitano.connection.repository_factory.class">Kitano\ConnectionBundle\Manager\ConnectionRepositoryFactory</parameter>
     </parameters>
     <services>
+        <!-- repository -->
+        <service id="kitano.connection.repository.doctrine_orm" class="%kitano.connection.repository.doctrine_orm.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%kitano.repository.doctrine_orm.managed_class%</argument>
+            <tag name="kitano_connection.repository" alias="doctrine_orm" />
+        </service>
+
+        <!-- factory -->
+        <service id="kitano.connection.repository_factory" class="%kitano.connection.repository_factory.class%">
+            <argument>%kitano.repository.default%</argument>
+        </service>
+
+        <service id="kitano.connection.repository_interface"
+                 factory-service="kitano.connection.repository_factory"
+                 factory-method="getRepository"
+                 class="Kitano\ConnectionBundle\ConnectionRepositoryInterface"
+         />
+
+        <!-- manager -->
         <service id="kitano.filter_validator" class="%kitano.filter_validator.class%" public="false" />
 
         <service id="kitano.connection.manager" class="%kitano.connection.manager.class%">
@@ -18,8 +38,12 @@
             <call method="setFilterValidator">
                 <argument type="service" id="kitano.filter_validator" />
             </call>
+            <call method="setConnectionRepository">
+                <argument type="service" id="kitano.connection.repository_interface" />
+            </call>
         </service>
-        
+
+        <!-- listener -->
         <service id="kitano.connection.listener.doctrine" class="%kitano.connection.listener.doctrine.class%" public="false">
             <call method="setConnectionManager">
                 <argument type="service" id="kitano.connection.manager"/>

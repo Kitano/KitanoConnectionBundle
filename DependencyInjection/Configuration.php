@@ -20,6 +20,14 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('kitano_connection');
 
+        $rootNode
+            ->children()
+                ->scalarNode('repository_class')
+                    ->defaultValue('Kitano\ConnectionBundle\Entity\ConnectionRepository')
+                ->end()
+            ->end()
+        ;
+
         return $treeBuilder;
     }
 }

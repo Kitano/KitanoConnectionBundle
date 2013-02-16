@@ -3,6 +3,7 @@
 namespace Kitano\ConnectionBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManager;
 
 use Kitano\ConnectionBundle\ConnectionRepositoryInterface;
 use Kitano\ConnectionBundle\Proxy\Connection;
@@ -16,6 +17,19 @@ use Kitano\ConnectionBundle\Model\NodeInterface;
  */
 class ConnectionRepository extends EntityRepository implements ConnectionRepositoryInterface
 {
+    /**
+     * @var string
+     */
+    protected $class;
+
+    public function __construct(EntityManager $em, $class)
+    {
+        $metadata = $em->getClassMetadata($class);
+        parent::__construct($em, $metadata);
+
+        $this->class = $class;
+    }
+
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
@@ -107,7 +121,7 @@ class ConnectionRepository extends EntityRepository implements ConnectionReposit
      */
     public function createEmptyConnection()
     {
-        return new \Kitano\ConnectionBundle\Entity\Connection();
+        return new $this->class();
     }
     
     /**
