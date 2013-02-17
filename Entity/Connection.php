@@ -2,8 +2,8 @@
 
 namespace Kitano\ConnectionBundle\Entity;
 
-use Kitano\ConnectionBundle\Proxy\Connection as ConnectionProxy;
+use Kitano\ConnectionBundle\Proxy\DoctrineOrmConnection;
 
-class Connection extends ConnectionProxy
+class Connection extends DoctrineOrmConnection
 {
 }

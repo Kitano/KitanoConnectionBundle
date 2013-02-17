@@ -2,8 +2,8 @@
 
 namespace Kitano\ConnectionBundle\Manager;
 
-use Kitano\ConnectionBundle\Model\Connection;
 use Kitano\ConnectionBundle\Exception\InvalidFilterException;
+use Kitano\ConnectionBundle\Model\ConnectionInterface;
 
 class FilterValidator
 {
@@ -16,8 +16,8 @@ class FilterValidator
         ),
         'status' => array(
             'allowed_values' => array(
-                Connection::STATUS_CONNECTED,
-                Connection::STATUS_DISCONNECTED
+                ConnectionInterface::STATUS_CONNECTED,
+                ConnectionInterface::STATUS_DISCONNECTED
             ),
         ),
         'depth' => array(

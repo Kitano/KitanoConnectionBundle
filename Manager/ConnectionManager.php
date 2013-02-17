@@ -3,11 +3,11 @@
 namespace Kitano\ConnectionBundle\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Kitano\ConnectionBundle\Model\ConnectionInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Kitano\ConnectionBundle\ConnectionRepositoryInterface;
+use Kitano\ConnectionBundle\Repository\ConnectionRepositoryInterface;
 use Kitano\ConnectionBundle\Event\ConnectionEvent;
-use Kitano\ConnectionBundle\Model\Connection;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 use Kitano\ConnectionBundle\Manager\FilterValidator;
 use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
@@ -16,24 +16,23 @@ use Kitano\ConnectionBundle\Exception\NotConnectedException;
 class ConnectionManager implements ConnectionManagerInterface
 {
     /**
-     * @var \Kitano\ConnectionBundle\ConnectionRepositoryInterface
+     * @var ConnectionRepositoryInterface
      */
     protected $connectionRepository;
     
     /**
-     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     * @var EventDispatcherInterface
      */
     protected $dispatcher;
 
     /**
-     * @var \Kitano\ConnectionBundle\Manager\FilterValidator
+     * @var FilterValidator
      */
     protected $filterValidator;
     
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
-     * @return \Kitano\ConnectionBundle\Model\Connection
+     * {@inheritDoc}
+     * @throws AlreadyConnectedException When connection from source to destination already exists
      */
     public function create(NodeInterface $source, NodeInterface $destination, $type)
     {
@@ -50,17 +49,18 @@ class ConnectionManager implements ConnectionManagerInterface
         $this->getConnectionRepository()->update($connection);
         
         if($this->dispatcher) {
-            $this->dispatcher->dispatch (ConnectionEvent::CONNECTED, new ConnectionEvent(($connection)));
+            $this->dispatcher->dispatch(ConnectionEvent::CONNECTED, new ConnectionEvent(($connection)));
         }
         
         return $connection;
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\Model\Connection $connection
-     * @return \Kitano\ConnectionBundle\Manager\ConnectionManager
+     * {@inheritDoc}
+     *
+     * @return ConnectionManagerInterface
      */
-    public function destroy(Connection $connection)
+    public function destroy(ConnectionInterface $connection)
     {
         if(!$this->areConnected($connection->getSource(), $connection->getDestination())) {
             throw new NotConnectedException();
@@ -78,17 +78,18 @@ class ConnectionManager implements ConnectionManagerInterface
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\Model\Connection $connection
-     * @return \Kitano\ConnectionBundle\Manager\ConnectionManager
+     * {@inheritDoc}
+     * @throws AlreadyConnectedException When connection is already in a connected state
+     *
+     * @return ConnectionManagerInterface
      */
-    public function connect(Connection $connection)
+    public function connect(ConnectionInterface $connection)
     {
         if($this->areConnected($connection->getSource(), $connection->getDestination())) {
             throw new AlreadyConnectedException();
         }
         
         $connection->connect();
-        
         $this->getConnectionRepository()->update($connection);
         
         if($this->dispatcher) {
@@ -99,10 +100,12 @@ class ConnectionManager implements ConnectionManagerInterface
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\Model\Connection $connection
-     * @return \Kitano\ConnectionBundle\Manager\ConnectionManager
+     * {@inheritDoc}
+     * @throws NotConnectedException When source and destination are not connected
+     *
+     * @return ConnectionManager
      */
-    public function disconnect(Connection $connection)
+    public function disconnect(ConnectionInterface $connection)
     {
         if(!$this->areConnected($connection->getSource(), $connection->getDestination())) {
             throw new NotConnectedException();
@@ -120,10 +123,7 @@ class ConnectionManager implements ConnectionManagerInterface
     }
  
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
-     * @param array $filters
-     * @return boolean
+     * {@inheritDoc}
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
@@ -133,21 +133,17 @@ class ConnectionManager implements ConnectionManagerInterface
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array $filters
-     * @return boolean
+     * {@inheritDoc}
      */
     public function hasConnections(NodeInterface $node, array $filters = array())
     {
         $this->filterValidator->validateFilters($filters);
 
-        return count($this->getConnections($node, $filters) > 0);
+        return count($this->getConnections($node, $filters)) > 0;
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array $filters
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * {@inheritDoc}
      */
     public function getConnectionsTo(NodeInterface $node, array $filters = array())
     {
@@ -157,9 +153,7 @@ class ConnectionManager implements ConnectionManagerInterface
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array $filters
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * {@inheritDoc}
      */
     public function getConnectionsFrom(NodeInterface $node, array $filters = array())
     {
@@ -169,9 +163,7 @@ class ConnectionManager implements ConnectionManagerInterface
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $value
-     * @param array $filters
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * {@inheritDoc}
      */
     public function getConnections(NodeInterface $node, array $filters = array())
     {
@@ -189,7 +181,7 @@ class ConnectionManager implements ConnectionManagerInterface
     }
 
     /**
-     * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
+     * @param EventDispatcherInterface $dispatcher
      */
     public function setDispatcher(EventDispatcherInterface $dispatcher)
     {
@@ -205,7 +197,7 @@ class ConnectionManager implements ConnectionManagerInterface
     }
     
     /**
-     * @param \Kitano\ConnectionBundle\ConnectionRepositoryInterface $connectionRepository
+     * @param ConnectionRepositoryInterface $connectionRepository
      */
     public function setConnectionRepository(ConnectionRepositoryInterface $connectionRepository)
     {
@@ -213,7 +205,7 @@ class ConnectionManager implements ConnectionManagerInterface
     }
     
     /**
-     * @return \Kitano\ConnectionBundle\ConnectionRepositoryInterface $connectionRepository
+     * @return ConnectionRepositoryInterface $connectionRepository
      */
     public function getConnectionRepository()
     {
