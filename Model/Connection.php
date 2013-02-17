@@ -2,11 +2,8 @@
 
 namespace Kitano\ConnectionBundle\Model;
 
-class Connection
+class Connection implements ConnectionInterface
 {
-    const STATUS_DISCONNECTED = 0;
-    const STATUS_CONNECTED = 1;
-    
     protected $source;
     protected $destination;
     
@@ -45,7 +42,7 @@ class Connection
         return $this->source;
     }
     
-    public function setSource($source) 
+    public function setSource(NodeInterface $source)
     {
         $this->source= $source;
         
@@ -57,7 +54,7 @@ class Connection
         return $this->destination;
     }
     
-    public function setDestination($destination) 
+    public function setDestination(NodeInterface $destination)
     {
         $this->destination= $destination;
         
@@ -72,10 +69,10 @@ class Connection
     public function setStatus($status) 
     {
         switch($status) {
-            case self::STATUS_DISCONNECTED :
+            case self::STATUS_DISCONNECTED:
                 $this->disconnect();
                 break;
-            case self::STATUS_CONNECTED :
+            case self::STATUS_CONNECTED:
                 $this->connect();
                 break;
             default :

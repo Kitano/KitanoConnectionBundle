@@ -4,7 +4,7 @@ namespace Kitano\ConnectionBundle\Proxy;
 
 use Kitano\ConnectionBundle\Model\Connection as ConnectionModel;
 
-class Connection extends ConnectionModel
+class DoctrineOrmConnection extends ConnectionModel
 {
     protected $sourceObjectClass;
     protected $sourceObjectId;
