@@ -3,7 +3,8 @@
 namespace Kitano\ConnectionBundle\Tests\Manager;
 
 use Kitano\ConnectionBundle\Manager\ConnectionManager;
-use Kitano\ConnectionBundle\Proxy\Connection;
+use Kitano\ConnectionBundle\Proxy\DoctrineOrmConnection;
+use Kitano\ConnectionBundle\Model\ConnectionInterface;
 
 class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
     /**
@@ -13,11 +14,11 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
 
     public function setUp()
     {
-        $connectionRepository = $this->getMock("Kitano\ConnectionBundle\ConnectionRepositoryInterface");
+        $connectionRepository = $this->getMock("Kitano\ConnectionBundle\Repository\ConnectionRepositoryInterface");
         $connectionRepository
                 ->expects($this->any())
                  ->method('createEmptyConnection')
-                 ->will($this->returnValue(new Connection()));
+                 ->will($this->returnValue(new DoctrineOrmConnection()));
         
         $this->connectionManager = new ConnectionManager();
         $this->connectionManager->setFilterValidator($this->getFilterValidatorMock());
@@ -49,7 +50,7 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($objectA, $connection->getSource());
         $this->assertEquals($objectB, $connection->getDestination());
         $this->assertEquals("follow", $connection->getType());
-        $this->assertEquals(Connection::STATUS_CONNECTED, $connection->getStatus());
+        $this->assertEquals(ConnectionInterface::STATUS_CONNECTED, $connection->getStatus());
     }
     
     public function testGetConnectionsFrom()
