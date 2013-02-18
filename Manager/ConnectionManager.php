@@ -93,7 +93,7 @@ class ConnectionManager implements ConnectionManagerInterface
         $this->getConnectionRepository()->update($connection);
         
         if($this->dispatcher) {
-            $this->dispatcher->dispatch (ConnectionEvent::CONNECTED, new ConnectionEvent(($connection)));
+            $this->dispatcher->dispatch (ConnectionEvent::CONNECTED, new ConnectionEvent($connection));
         }
         
         return $this;
@@ -116,7 +116,7 @@ class ConnectionManager implements ConnectionManagerInterface
         $this->getConnectionRepository()->update($connection);
         
         if($this->dispatcher) {
-            $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent(($connection)));
+            $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent($connection));
         }
         
         return $this;

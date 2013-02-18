@@ -24,6 +24,36 @@ class KitanoConnectionExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
+
+        // Persistence config
+        if (isset($config['persistence']['managed_class'])) {
+            if (isset($config['persistence']['managed_class']['connection'])) {
+                $container->setParameter('kitano_connection.managed_class.connection',
+                    $config['persistence']['managed_class']['connection']);
+            }
+        }
+
+        if ('custom' !== $config['persistence']['type']) {
+            $loader->load(sprintf('persistence/%s.xml', $config['persistence']['type']));
+
+            if (!$container->hasParameter('kitano_connection.managed_class.connection')) {
+                switch($config['persistence']['type']) {
+                    case 'doctrine_orm':
+                        $container->setParameter('kitano_connection.managed_class.connection',
+                            'Kitano\ConnectionBundle\Entity\Connection');
+
+                        break;
+
+                    case 'doctrine_mongodb':
+                        $container->setParameter('kitano_connection.managed_class.connection',
+                            'Kitano\ConnectionBundle\Document\Connection');
+
+                        break;
+                }
+            }
+        }
+
+        // Model
+        $loader->load('model.xml');
     }
 }
