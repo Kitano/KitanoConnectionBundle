@@ -2,32 +2,49 @@
 
 namespace Kitano\ConnectionBundle\Tests\DependencyInjection;
 
+use Kitano\ConnectionBundle\KitanoConnectionBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-
 use Kitano\ConnectionBundle\DependencyInjection\KitanoConnectionExtension;
+use Symfony\Component\DependencyInjection\Definition;
 
-class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase {
-    private $container;
-    private $extension;
+abstract class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
+{
+    abstract protected function loadFromFile(ContainerBuilder $container, $file);
 
-    public function setUp()
+    public function testCustomConnectionManagedClass()
     {
-        $this->container = new ContainerBuilder();
-        $this->extension = new KitanoConnectionExtension();
+        $container = $this->getContainer('container1', true);
+
+        $this->assertEquals($container->getParameter('kitano_connection.managed_class.connection'),
+            'My\Entity\Connection');
     }
 
-    public function tearDown()
+    /**
+     * @expectedException \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
+     */
+    public function testCustomPersistenceType()
     {
-        unset($this->container, $this->extension);
+        $container = $this->getContainer('container1', false);
     }
-    
-    public function testContextDefinition()
+
+    protected function getContainer($file, $createCustomRepository = true)
     {
-        $config = array(
-            "kitano_connection" => array (
-            ),
-        );
-        
-        $this->extension->load($config, $this->container);
+        $container = new ContainerBuilder();
+
+        if ($createCustomRepository) {
+            $definition = new Definition('My\CustomRepository');
+            $container->setDefinition('kitano_connection.repository.connection', $definition);
+        }
+
+        $kitanoConnection = new KitanoConnectionExtension();
+        $container->registerExtension($kitanoConnection);
+
+        $bundle = new KitanoConnectionBundle();
+        $bundle->build($container); // Attach all default factories
+        $this->loadFromFile($container, $file);
+
+        $container->compile();
+
+        return $container;
     }
 }

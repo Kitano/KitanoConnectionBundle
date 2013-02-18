@@ -1,0 +1,5 @@
+kitano_connection:
+    persistence:
+        type: custom
+        managed_class:
+            connection: My\Entity\Connection
