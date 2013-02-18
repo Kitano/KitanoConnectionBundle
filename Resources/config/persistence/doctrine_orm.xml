@@ -12,7 +12,7 @@
         <!-- repository -->
         <service id="kitano_connection.repository.connection" class="%kitano_connection.repository.connection.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument>%kitano_connection.repository.connection.class%</argument>
+            <argument>%kitano_connection.managed_class.connection%</argument>
         </service>
 
         <!-- listener -->
