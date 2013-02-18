@@ -3,40 +3,72 @@
 namespace Kitano\ConnectionBundle\Tests\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
-
 use Kitano\ConnectionBundle\DependencyInjection\Configuration;
 
-class ConfigurationText extends \PHPUnit_Framework_TestCase {
-    private $configuration;
-    private $processor;
-
-    public function setUp()
+class ConfigurationTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testInvalidPersistenceType()
     {
-        $this->configuration = new Configuration();
-        $this->processor = new Processor();
+        $processor = new Processor();
+        $configuration = new Configuration(array());
+
+        $processor->processConfiguration($configuration, array(
+            array(
+                'persistence' => array(
+                    'type' => 'my_awesome_orm',
+                ),
+            )
+        ));
     }
 
-    public function tearDown()
+    public function testDoctrineOrmPersistenceType()
     {
-        unset($this->configuration, $this->processor);
-    }
-    
-    public function testStandardDefinition()
-    {
-        $configRaw = array(
-            "kitano_connection" => array (
+        $processor = new Processor();
+        $configuration = new Configuration(array());
+
+        $config = $processor->processConfiguration($configuration, array(array(
+            'persistence' => array(
+                'type' => 'doctrine_orm',
             ),
-        );
-        
-        $config = $this->processor->processConfiguration($this->configuration, $configRaw);
+        )));
+
+        $this->assertEquals(array('type' => 'doctrine_orm'), $config['persistence']);
     }
-    
-    public function testNoDefinition()
+
+    public function testDoctrineMongoDbPersistenceType()
     {
-        $configRaw = array(
-            "kitano_connection" => array (),
-        );
-        
-        $config = $this->processor->processConfiguration($this->configuration, $configRaw);
+        $processor = new Processor();
+        $configuration = new Configuration(array());
+
+        $config = $processor->processConfiguration($configuration, array(array(
+            'persistence' => array(
+                'type' => 'doctrine_mongodb',
+            ),
+        )));
+
+        $this->assertEquals(array('type' => 'doctrine_mongodb'), $config['persistence']);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testEmptyConnectionManagedClass()
+    {
+        $processor = new Processor();
+        $configuration = new Configuration(array());
+
+        $processor->processConfiguration($configuration, array(array(
+            'persistence' => array(
+                'managed_class' => array('connection' => null),
+            ),
+        )));
+    }
+
+    protected static function getBundleDefaultConfig()
+    {
+        return array();
     }
 }
