@@ -24,8 +24,13 @@ class KitanoConnectionExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
 
-        $container->setParameter($this->getAlias() . '.repository_class', $config['repository_class']);
+        // Persistence config
+        if ('custom' !== $config['persistence']['type']) {
+            $loader->load(sprintf('persistence/%s.xml', $config['persistence']['type']));
+        }
+
+        // Model
+        $loader->load('model.xml');
     }
 }

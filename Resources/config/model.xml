@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="kitano_connection.manager.connection.class">Kitano\ConnectionBundle\Manager\ConnectionManager</parameter>
+        <parameter key="kitano_connection.manager.filter_validator.class">Kitano\ConnectionBundle\Manager\FilterValidator</parameter>
+    </parameters>
+    <services>
+        <!-- Filter validator -->
+        <service id="kitano_connection.manager.filter_validator" class="%kitano_connection.manager.filter_validator.class%" public="false" />
+
+        <!-- Connection manager -->
+        <service id="kitano_connection.manager.connection" class="%kitano_connection.manager.connection.class%">
+            <call method="setDispatcher">
+                <argument type="service" id="event_dispatcher" on-invalid="ignore"/>
+            </call>
+            <call method="setFilterValidator">
+                <argument type="service" id="kitano_connection.manager.filter_validator" />
+            </call>
+            <call method="setConnectionRepository">
+                <argument type="service" id="kitano_connection.repository.connection" />
+            </call>
+        </service>
+    </services>
+</container>

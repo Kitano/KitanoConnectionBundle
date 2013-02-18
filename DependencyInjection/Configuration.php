@@ -2,6 +2,7 @@
 
 namespace Kitano\ConnectionBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -20,14 +21,41 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('kitano_connection');
 
-        $rootNode
+        $this->addPersistenceSection($rootNode);
+
+        return $treeBuilder;
+    }
+
+    /**
+     * Parses the kitano_connection.persistence config section
+     * Example for yaml driver:
+     * kitano_connection:
+     *     persistence:
+     *         type:
+     *
+     * @param ArrayNodeDefinition $node
+     * @return void
+     */
+    private function addPersistenceSection(ArrayNodeDefinition $node)
+    {
+        $supportedDrivers = array('doctrine_orm', 'doctrine_mongodb', 'custom');
+
+        $node
             ->children()
-                ->scalarNode('repository_class')
-                    ->defaultValue('Kitano\ConnectionBundle\Entity\ConnectionRepository')
+                ->arrayNode('persistence')
+                    ->children()
+                        ->scalarNode('type')
+                            ->validate()
+                                ->ifNotInArray($supportedDrivers)
+                                ->thenInvalid('The driver %s is not supported. Please choose one of '.json_encode($supportedDrivers))
+                            ->end()
+                            ->cannotBeOverwritten()
+                            ->isRequired()
+                            ->cannotBeEmpty()
+                        ->end()
+                    ->end()
                 ->end()
             ->end()
         ;
-
-        return $treeBuilder;
     }
 }
