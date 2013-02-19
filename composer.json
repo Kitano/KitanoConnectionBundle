@@ -22,7 +22,8 @@
     },
     "require-dev": {
         "symfony/yaml": ">=2.0",
-        "doctrine/orm": ">=2"
+        "doctrine/orm": ">=2",
+        "beberlei/DoctrineExtensions": "dev-master"
     },
     "autoload": {
         "psr-0": { "Kitano\\ConnectionBundle": "" }
