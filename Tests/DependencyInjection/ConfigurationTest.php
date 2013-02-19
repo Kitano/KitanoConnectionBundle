@@ -29,11 +29,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $processor = new Processor();
         $configuration = new Configuration(array());
 
-        $config = $processor->processConfiguration($configuration, array(array(
-            'persistence' => array(
-                'type' => 'doctrine_orm',
-            ),
-        )));
+        $config = $processor->processConfiguration($configuration, array(
+            array(
+                'persistence' => array(
+                    'type' => 'doctrine_orm',
+                ),
+            )
+        ));
 
         $this->assertEquals(array('type' => 'doctrine_orm'), $config['persistence']);
     }
@@ -43,11 +45,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $processor = new Processor();
         $configuration = new Configuration(array());
 
-        $config = $processor->processConfiguration($configuration, array(array(
-            'persistence' => array(
-                'type' => 'doctrine_mongodb',
-            ),
-        )));
+        $config = $processor->processConfiguration($configuration, array(
+            array(
+                'persistence' => array(
+                    'type' => 'doctrine_mongodb',
+                ),
+            )
+        ));
 
         $this->assertEquals(array('type' => 'doctrine_mongodb'), $config['persistence']);
     }
@@ -60,11 +64,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $processor = new Processor();
         $configuration = new Configuration(array());
 
-        $processor->processConfiguration($configuration, array(array(
-            'persistence' => array(
-                'managed_class' => array('connection' => null),
-            ),
-        )));
+        $processor->processConfiguration($configuration, array(
+            array(
+                'persistence' => array(
+                    'managed_class' => array('connection' => null),
+                ),
+            )
+        ));
     }
 
     protected static function getBundleDefaultConfig()
