@@ -9,11 +9,25 @@ use Symfony\Component\DependencyInjection\Definition;
 
 abstract class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
 {
+    private $container;
+    private $extension;
+
+    public function setUp()
+    {
+        $this->container = new ContainerBuilder();
+        $this->extension = new KitanoConnectionExtension();
+    }
+
+    public function tearDown()
+    {
+        unset($this->container, $this->extension);
+    }
+    
     abstract protected function loadFromFile(ContainerBuilder $container, $file);
 
     public function testCustomConnectionManagedClass()
     {
-        $container = $this->getContainer('container1', true);
+        $container = $this->getContainer('persistence_custom', true);
 
         $this->assertEquals($container->getParameter('kitano_connection.managed_class.connection'),
             'My\Entity\Connection');
@@ -24,9 +38,44 @@ abstract class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testCustomPersistenceType()
     {
-        $container = $this->getContainer('container1', false);
+        $container = $this->getContainer('persistence_custom', false);
     }
-
+    
+    public function testOrmPeristenceDefaultManagedClass()
+    {
+        $config = array(
+            "kitano_connection" => array (
+                "persistence" => array (
+                    "type" => "doctrine_orm",
+                ),
+            ),
+        );
+        
+        $this->extension->load($config, $this->container);
+        $this->container->compile();
+        
+        $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'Kitano\ConnectionBundle\Entity\Connection');
+    }
+    
+    public function testOrmPeristenceCustomManagedClass()
+    {
+        $config = array(
+            "kitano_connection" => array (
+                "persistence" => array (
+                    "type" => "doctrine_orm",
+                    "managed_class" => array (
+                        "connection" => "My\Entity\Connection",
+                    ),
+                ),
+            ),
+        );
+        
+        $this->extension->load($config, $this->container);
+        $this->container->compile();
+        
+        $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'My\Entity\Connection');
+    }
+    
     protected function getContainer($file, $createCustomRepository = true)
     {
         $container = new ContainerBuilder();
