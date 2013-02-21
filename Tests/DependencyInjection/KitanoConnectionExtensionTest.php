@@ -9,7 +9,14 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \Symfony\Component\DependencyInjection\ContainerBuilder
+     */
     private $container;
+    
+    /**
+     * @var \Kitano\ConnectionBundle\DependencyInjection\KitanoConnectionExtension
+     */
     private $extension;
 
     public function setUp()
