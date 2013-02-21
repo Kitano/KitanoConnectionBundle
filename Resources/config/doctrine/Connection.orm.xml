@@ -12,7 +12,7 @@
         
         <field name="type" type="string" column="type" length="255"/>
         <field name="createdAt" type="datetime" column="created_at" />
-        <field name="connectedAt" type="datetime" column="connected_at" />
-        <field name="disconnectedAt" type="datetime" column="disconnected_at" />
+        <field name="connectedAt" type="datetime" column="connected_at" nullable="true" />
+        <field name="disconnectedAt" type="datetime" column="disconnected_at" nullable="true" />
     </entity>
 </doctrine-mapping>
