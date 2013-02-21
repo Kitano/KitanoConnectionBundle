@@ -23,7 +23,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             )
         ));
     }
-
+    
     public function testDoctrineOrmPersistenceType()
     {
         $processor = new Processor();
@@ -56,21 +56,24 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('type' => 'doctrine_mongodb'), $config['persistence']);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     */
     public function testEmptyConnectionManagedClass()
     {
         $processor = new Processor();
         $configuration = new Configuration(array());
 
-        $processor->processConfiguration($configuration, array(
-            array(
-                'persistence' => array(
-                    'managed_class' => array('connection' => null),
-                ),
-            )
-        ));
+        try {
+            $processor->processConfiguration($configuration, array(
+                array(
+                    'persistence' => array(
+                        'type' => 'doctrine_orm',
+                        'managed_class' => array('connection' => null),
+                    ),
+                )
+            ));
+        }
+        catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
+            $this->assertEquals('kitano_connection.persistence.managed_class.connection', $exception->getPath());
+        }
     }
 
     protected static function getBundleDefaultConfig()
