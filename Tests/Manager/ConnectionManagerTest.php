@@ -2,11 +2,14 @@
 
 namespace Kitano\ConnectionBundle\Tests\Manager;
 
+use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Manager\ConnectionManager;
-use Kitano\ConnectionBundle\Proxy\DoctrineOrmConnection;
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
+use Kitano\ConnectionBundle\Repository\ArrayRepository;
 
 class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
+    const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Model\Connection';
+    
     /**
      * @var \Kitano\ConnectionBundle\Manager\ConnectionManager
      */
@@ -14,17 +17,11 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
 
     public function setUp()
     {
-        $connectionRepository = $this->getMock("Kitano\ConnectionBundle\Repository\ConnectionRepositoryInterface");
-        $connectionRepository
-                ->expects($this->any())
-                 ->method('createEmptyConnection')
-                 ->will($this->returnValue(new DoctrineOrmConnection()));
-        
         $this->connectionManager = new ConnectionManager();
         $this->connectionManager->setFilterValidator($this->getFilterValidatorMock());
-        $this->connectionManager->setConnectionRepository($connectionRepository);
+        $this->connectionManager->setConnectionRepository(new ArrayRepository(self::CONNECTION_CLASS));
     }
-
+    
     protected function getFilterValidatorMock()
     {
         $mock = $this->getMockBuilder('Kitano\ConnectionBundle\Manager\FilterValidator')
@@ -41,59 +38,53 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
     
     public function testCreate()
     {
-        $objectA = $this->getMock("Kitano\ConnectionBundle\Model\NodeInterface");
-        $objectB = $this->getMock("Kitano\ConnectionBundle\Model\NodeInterface");
+        $nodeSource = new Node();
+        $nodeDestination = new Node();
         
-        $connection = $this->connectionManager->create($objectA, $objectB, "follow");
+        $connection = $this->connectionManager->create($nodeSource, $nodeDestination, "follow");
         
         $this->assertInstanceOf('Kitano\ConnectionBundle\Model\Connection', $connection);
-        $this->assertEquals($objectA, $connection->getSource());
-        $this->assertEquals($objectB, $connection->getDestination());
+        $this->assertEquals($nodeSource, $connection->getSource());
+        $this->assertEquals($nodeDestination, $connection->getDestination());
         $this->assertEquals("follow", $connection->getType());
         $this->assertEquals(ConnectionInterface::STATUS_CONNECTED, $connection->getStatus());
     }
     
     public function testGetConnectionsFrom()
     {
-        $this->markTestIncomplete("Ce test n'a pas encore été implémenté.");
+        $nodeSource = new Node();
+        $nodeDestination = new Node();
         
-        $objectA = $this->getMock("Kitano\ConnectionBundle\Model\NodeInterface");
-        $objectB = $this->getMock("Kitano\ConnectionBundle\Model\NodeInterface");
+        $connection = $this->connectionManager->create($nodeSource, $nodeDestination, "follow");
         
-        $connection = $this->connectionManager->create($objectA, $objectB, "follow");
-        
-        $connections = $this->connectionManager->getConnectionsFrom($objectA);
+        $connections = $this->connectionManager->getConnectionsFrom($nodeSource);
         
         $this->assertNotNull($connections);
-        $this->assertContains($connection, $connections->getIterator());
+        $this->assertContains($connection, $connections);
     }
     
     public function testGetConnectionsTo()
     {
-        $this->markTestIncomplete("Ce test n'a pas encore été implémenté.");
+        $nodeSource = new Node();
+        $nodeDestination = new Node();
         
-        $objectA = $this->getMock("Kitano\ConnectionBundle\Model\NodeInterface");
-        $objectB = $this->getMock("Kitano\ConnectionBundle\Model\NodeInterface");
+        $connection = $this->connectionManager->create($nodeSource, $nodeDestination, "follow");
         
-        $connection = $this->connectionManager->create($objectA, $objectB, "follow");
-        
-        $connections = $this->connectionManager->getConnectionsFrom($objectB);
-        
+        $connections = $this->connectionManager->getConnectionsTo($nodeDestination);
+
         $this->assertNotNull($connections);
-        $this->assertContains($connection, $connections->getIterator());
+        $this->assertContains($connection, $connections);
     }
     
     public function testGetConnections()
     {
-        $this->markTestIncomplete("Ce test n'a pas encore été implémenté.");
+        $nodeSource = new Node();
+        $nodeDestination = new Node();
         
-        $objectA = $this->getMock("Kitano\ConnectionBundle\Model\NodeInterface");
-        $objectB = $this->getMock("Kitano\ConnectionBundle\Model\NodeInterface");
+        $connection = $this->connectionManager->create($nodeSource, $nodeDestination, "follow");
         
-        $connection = $this->connectionManager->create($objectA, $objectB, "follow");
-        
-        $connectionsOnA = $this->connectionManager->getConnections($objectA);
-        $connectionsOnB = $this->connectionManager->getConnections($objectB);
+        $connectionsOnA = $this->connectionManager->getConnections($nodeSource);
+        $connectionsOnB = $this->connectionManager->getConnections($nodeDestination);
         
         $this->assertNotNull($connectionsOnA);
         $this->assertContains($connection, $connectionsOnA->getIterator());
