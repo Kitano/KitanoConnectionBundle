@@ -15,25 +15,22 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
      */
     private $repository;
 
-    /**
-     * @var \Doctrine\ORM\EntityManager
-     */
-    private $em;
-
     public function setUp()
     {
         if (!interface_exists('Doctrine\Common\Persistence\ObjectManager')) {
             $this->markTestSkipped('Doctrine Common has to be installed for this test to run.');
         }
-
-        $this->em = $this->getEntityManager();
-        $this->repository = new DoctrineOrmConnectionRepository($this->em, static::CONNECTION_CLASS);
+        
+        parent::setUp();
+        
+        $this->repository = new DoctrineOrmConnectionRepository($this->getEntityManager(), static::CONNECTION_CLASS);
     }
 
     public function tearDown()
     {
-        unset($this->em);
         unset($this->repository);
+        
+        parent::tearDown();
     }
 
     public function testCreateEmptyConnectionReturnDoctrineOrmEntity()
