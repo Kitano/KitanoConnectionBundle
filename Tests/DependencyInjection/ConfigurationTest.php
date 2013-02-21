@@ -75,6 +75,53 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals('kitano_connection.persistence.managed_class.connection', $exception->getPath());
         }
     }
+    
+    public function testEmptyConnectionType()
+    {
+        $processor = new Processor();
+        $configuration = new Configuration(array());
+
+        try {
+            $processor->processConfiguration($configuration, array(
+                array(
+                    'persistence' => array(
+                        'type' => null,
+                    ),
+                )
+            ));
+        }
+        catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
+            $this->assertEquals('kitano_connection.persistence.type', $exception->getPath());
+        }
+    }
+    
+    public function testEmptyPersistence()
+    {
+        $processor = new Processor();
+        $configuration = new Configuration(array());
+
+        try {
+            $processor->processConfiguration($configuration, array(
+                array(
+                    'persistence' => array(
+                    ),
+                )
+            ));
+        }
+        catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
+            $this->assertEquals('kitano_connection.persistence', $exception->getPath());
+        }
+    }
+    
+    public function testEmptyConfiguration()
+    {
+        $processor = new Processor();
+        $configuration = new Configuration(array());
+
+        $processedConfiguration = $processor->processConfiguration($configuration, array());
+        
+        $this->assertEquals(array(), $processedConfiguration);
+    }
 
     protected static function getBundleDefaultConfig()
     {
