@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\ORM\Tools\SchemaTool;
 
 use DoctrineExtensions\PHPUnit\OrmTestCase as BaseOrmTestCase;
 
@@ -17,6 +18,13 @@ use DoctrineExtensions\PHPUnit\OrmTestCase as BaseOrmTestCase;
  */
 class OrmTestCase extends BaseOrmTestCase
 {
+    /**
+     * @var \Doctrine\ORM\Tools\SchemaTool
+     */
+    private $schemaTool;
+    
+    private $doctrineMetadata;
+    
     /**
      * @return \Doctrine\ORM\EntityManager
      */
@@ -62,6 +70,19 @@ class OrmTestCase extends BaseOrmTestCase
         );
 
         return $em;
+    }
+    
+    public function setUp () 
+    {
+        $this->doctrineMetadata = $this->getEntityManager()->getMetadataFactory()->getAllMetadata();
+        
+        $this->schemaTool = new SchemaTool($this->getEntityManager());
+        $this->schemaTool->createSchema($this->doctrineMetadata);
+    }
+    
+    public function tearDown()
+    {
+        $this->schemaTool->dropSchema($this->doctrineMetadata);
     }
 
     protected function getDataSet()
