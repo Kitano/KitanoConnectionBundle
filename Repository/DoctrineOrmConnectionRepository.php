@@ -94,8 +94,8 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
      */
     public function update(ConnectionInterface $connection)
     {
-        $sourceInformations = $this->extractMetadata($this->getSource());
-        $destinationInformations = $this->extractMetadata($this->getDestination());
+        $sourceInformations = $this->extractMetadata($connection->getSource());
+        $destinationInformations = $this->extractMetadata($connection->getDestination());
         
         $connection->setSourceObjectId($sourceInformations["object_id"]);
         $connection->setSourceObjectClass($sourceInformations["object_class"]);
