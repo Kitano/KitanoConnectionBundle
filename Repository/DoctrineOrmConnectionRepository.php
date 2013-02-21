@@ -35,7 +35,7 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
      * @param NodeInterface $node
      * @param array         $filters
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return array
      */
     public function getConnectionsWithSource(NodeInterface $node, array $filters = array())
     {
@@ -63,7 +63,7 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
      * @param array $filters
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return array
      */
     public function getConnectionsWithDestination(NodeInterface $node, array $filters = array())
     {
