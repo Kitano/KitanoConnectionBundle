@@ -32,9 +32,10 @@ class Connection implements ConnectionInterface
      */
     protected $connectedAt;
     
-    public function __constructor()
+    public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->type = ConnectionInterface::STATUS_DISCONNECTED;
     }
     
     public function getSource()
