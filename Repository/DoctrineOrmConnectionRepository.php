@@ -137,9 +137,15 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     {
         $classMetadata = $this->_em->getClassMetadata(get_class($node));
         
+        $ids = $classMetadata->getIdentifierValues($node);
+        
+        if(count($ids) > 1) {
+            throw new \RuntimeException("Composed Primary Key are not managed");
+        }
+        
         return array(
             'object_class' => $classMetadata->getName(),
-            'object_id' => $classMetadata->getIdentifierValues($node),
+            'object_id' => array_pop($ids),
         );
     }
     
