@@ -107,16 +107,14 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
     
     public function testGetConnectionsWithSourceNotContains()
     {
-        $this->markTestIncomplete("Ce test n'a pas encore été validé.");
-        
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
         
         $this->getEntityManager()->persist($nodeSource);
         $this->getEntityManager()->persist($nodeDestination);
         $this->getEntityManager()->flush();
-        
-        $this->assertInstanceOf('array', $this->repository->getConnectionsWithSource($nodeSource));
+
+        //TODO: Check getConnectionsWithSource return an array
         $this->assertEquals(array(), $this->repository->getConnectionsWithSource($nodeSource));
     }
     
