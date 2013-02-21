@@ -2,6 +2,7 @@
 
 namespace Kitano\ConnectionBundle\Tests\Repository;
 
+use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Tests\OrmTestCase;
 use Kitano\ConnectionBundle\Repository\DoctrineOrmConnectionRepository;
 
@@ -40,5 +41,21 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         $connection = $this->repository->createEmptyConnection();
 
         $this->assertInstanceOf(static::CONNECTION_CLASS, $connection);
+    }
+
+    public function testExtractedClassMetadata()
+    {
+        $node = new Node();
+        $node->setId(123);
+        $expectedMetadata = array(
+            'object_class' => 'Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node',
+            'object_id' => 123,
+        );
+
+        $method = new \ReflectionMethod($this->repository, 'extractMetadata');
+        $method->setAccessible(true);
+        $metadata = $method->invoke($this->repository, $node);
+
+        $this->assertEquals($metadata, $expectedMetadata);
     }
 }

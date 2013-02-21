@@ -27,12 +27,14 @@ class OrmTestCase extends BaseOrmTestCase
         $eventManager->addEventListener(array("preTestSetUp"), new SchemaSetupListener());
 
         // doctrine xml configs and namespaces
-        $configPathList = array();
         $prefixList = array();
         if (is_dir(__DIR__.'/../Resources/config/doctrine')) {
             $dir = __DIR__.'/../Resources/config/doctrine';
-            $configPathList[] = $dir;
             $prefixList[$dir] = 'Kitano\ConnectionBundle\Entity';
+        }
+        if (is_dir(__DIR__.'/Fixtures/Doctrine/Mapping')) {
+            $dir = __DIR__.'/Fixtures/Doctrine/Mapping';
+            $prefixList[$dir] = 'Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity';
         }
 
         // create drivers (that reads xml configs)
