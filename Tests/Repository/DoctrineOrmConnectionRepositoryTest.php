@@ -74,7 +74,7 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         $connection = $this->createConnection(new Node(42), new Node(123));
         
         $this->assertEquals($connection, $this->repository->update($connection));
-        $this->assertEquals($connection, $this->getEntityManager()->find('Kitano\ConnectionBundle\Entity\Connection', $connection->getId()));
+        $this->assertEquals($connection, $this->getEntityManager()->find(self::CONNECTION_CLASS, $connection->getId()));
     }
     
     public function testDestroy()
@@ -86,7 +86,7 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         $id = $connection->getId();
         
         $this->assertEquals($this->repository, $this->repository->destroy($connection));
-        $this->assertNull($this->getEntityManager()->find('Kitano\ConnectionBundle\Entity\Connection', $id));
+        $this->assertNull($this->getEntityManager()->find(self::CONNECTION_CLASS, $id));
     }
     
     public function testGetConnectionsWithSource()
@@ -107,6 +107,8 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
     
     public function testGetConnectionsWithSourceNotContains()
     {
+        $this->markTestIncomplete("Ce test n'a pas encore été validé.");
+        
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
         
@@ -114,6 +116,7 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         $this->getEntityManager()->persist($nodeDestination);
         $this->getEntityManager()->flush();
         
+        $this->assertInstanceOf('array', $this->repository->getConnectionsWithSource($nodeSource));
         $this->assertEquals(array(), $this->repository->getConnectionsWithSource($nodeSource));
     }
     
@@ -141,6 +144,8 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         $this->getEntityManager()->persist($nodeSource);
         $this->getEntityManager()->persist($nodeDestination);
         $this->getEntityManager()->flush();
+        
+        var_dump($this->repository->getConnectionsWithDestination($nodeDestination));
         
         $this->assertEquals(array(), $this->repository->getConnectionsWithDestination($nodeDestination));
     }
