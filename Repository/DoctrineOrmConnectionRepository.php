@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
 use Kitano\ConnectionBundle\Proxy\DoctrineOrmConnection;
 use Kitano\ConnectionBundle\Model\NodeInterface;
+use Kitano\ConnectionBundle\Exception\NotSupportedNodeException;
 
 /**
  * ConnectionRepository
@@ -140,7 +141,7 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
         $ids = $classMetadata->getIdentifierValues($node);
         
         if(count($ids) > 1) {
-            throw new \RuntimeException("Composed Primary Key are not managed");
+            throw new NotSupportedNodeException("Composed primary keys for: " . $classMetadata->getName());
         }
         
         return array(
