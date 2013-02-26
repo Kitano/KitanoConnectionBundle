@@ -117,10 +117,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $processor = new Processor();
         $configuration = new Configuration(array());
-
-        $processedConfiguration = $processor->processConfiguration($configuration, array());
         
-        $this->assertEquals(array(), $processedConfiguration);
+        try {
+            $processor->processConfiguration($configuration, array(
+                array()
+            ));
+        }
+        catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
+            $this->assertEquals('kitano_connection', $exception->getPath());
+        }
     }
 
     protected static function getBundleDefaultConfig()
