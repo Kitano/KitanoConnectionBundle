@@ -18,16 +18,22 @@ interface ConnectionManagerInterface
     
     /**
      * @param ConnectionInterface $connection
+     * 
+     * @return ConnectionManagerInterface
      */
     public function destroy(ConnectionInterface $connection);
     
     /**
      * @param ConnectionInterface $connection
+     * 
+     * @return ConnectionManagerInterface
      */
     public function connect(ConnectionInterface $connection);
     
     /**
      * @param ConnectionInterface $connection
+     * 
+     * @return ConnectionManagerInterface
      */
     public function disconnect(ConnectionInterface $connection);
     
@@ -52,7 +58,7 @@ interface ConnectionManagerInterface
      * @param NodeInterface $node
      * @param array         $filters
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return array
      */
     public function getConnectionsTo(NodeInterface $node, array $filters = array());
     
@@ -60,7 +66,7 @@ interface ConnectionManagerInterface
      * @param NodeInterface $node
      * @param array         $filters
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return array
      */
     public function getConnectionsFrom(NodeInterface $node, array $filters = array());
     
@@ -68,7 +74,7 @@ interface ConnectionManagerInterface
      * @param NodeInterface $node
      * @param array         $filters
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return array
      */
     public function getConnections(NodeInterface $node, array $filters = array());
 }
