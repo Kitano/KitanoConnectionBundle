@@ -43,6 +43,8 @@ class Configuration implements ConfigurationInterface
         $node
             ->children()
                 ->arrayNode('persistence')
+                ->isRequired()
+                ->cannotBeEmpty()
                     ->children()
                         ->scalarNode('type')
                             ->validate()
