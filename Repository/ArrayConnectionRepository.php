@@ -40,7 +40,9 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
         
         foreach ($this->connections as $connection) {
             if($node === $connection->getSource()) {
-                $connections[] = $connection;
+                if(array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
+                    $connections[] = $connection;
+                }
             }
         }
         
@@ -59,7 +61,9 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
         
         foreach ($this->connections as $connection) {
             if($node === $connection->getDestination()) {
-                $connections[] = $connection;
+                if(array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
+                    $connections[] = $connection;
+                }
             }
         }
         
