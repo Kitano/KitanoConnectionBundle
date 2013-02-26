@@ -92,4 +92,21 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotNull($connectionsOnB);
         $this->assertContains($connection, $connectionsOnB->getIterator());
     }
+    
+    public function testAreConnectedSuccess()
+    {
+        $nodeA = new Node();
+        $nodeB = new Node();
+        $nodeC = new Node();
+        $nodeD = new Node();
+        
+        $connection = $this->connectionManager->create($nodeA, $nodeB, "follow");
+        $connection = $this->connectionManager->create($nodeA, $nodeC, "like");
+        $connection = $this->connectionManager->create($nodeA, $nodeD, "view");
+        
+        $this->assertTrue($this->connectionManager->areConnected($nodeA, $nodeB, array('type' => 'follow')));
+        $this->assertFalse($this->connectionManager->areConnected($nodeA, $nodeC, array('type' => 'follow')));
+        
+        $this->assertFalse($this->connectionManager->areConnected($nodeC, $nodeA, array('type' => 'like')));
+    }
 }
