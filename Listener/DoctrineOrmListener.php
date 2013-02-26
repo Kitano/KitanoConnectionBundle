@@ -2,19 +2,17 @@
 
 namespace Kitano\ConnectionBundle\Listener;
 
-use Kitano\ConnectionBundle\Manager\ConnectionManagerInterface;
-
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
+
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DoctrineOrmListener implements EventSubscriber
 {
     /**
-     *
-     * @var \Kitano\ConnectionBundle\Manager\ConnectionManagerInterface
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface
      */
-    protected $connectionManager;
-
+    protected $container;
 
     public function getSubscribedEvents()
     {
@@ -31,8 +29,8 @@ class DoctrineOrmListener implements EventSubscriber
     {
         $entity = $eventArgs->getEntity();
         
-        if($this->manager->hasConnections($entity)) {
-            $connections = $this->manager->getConnections($entity);
+        if($this->getConnectionManager()->hasConnections($entity)) {
+            $connections = $this->getConnectionManager()->getConnections($entity);
             
             foreach($connections as $connection) {
                 $eventArgs->getEntityManager()->remove($connection);
@@ -44,18 +42,18 @@ class DoctrineOrmListener implements EventSubscriber
     
     /**
      * 
-     * @param \Kitano\ConnectionBundle\Manager\ConnectionManagerInterface $connectionManager
-     * @return \Kitano\ConnectionBundle\Listener\DoctrineListener
+     * @return \Kitano\ConnectionBundle\Manager\ConnectionManagerInterface
      */
-    public function setConnectionManager(ConnectionManagerInterface $connectionManager)
-    {
-        $this->connectionManager = $connectionManager;
-        
-        return $this;
-    }
-    
     public function getConnectionManager()
     {
-        return $this->connectionManager;
+        return $this->container->get('kitano_connection.manager.connection');
+    }
+    
+    /**
+     * @param \Symfony\Component\DependencyInjection\ContainerInterface
+     */
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
     }
 }

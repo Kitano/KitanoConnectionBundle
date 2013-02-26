@@ -17,8 +17,8 @@
 
         <!-- listener -->
         <service id="kitano_connection.listener.doctrine_orm" class="%kitano_connection.listener.doctrine_orm.class%" public="false">
-            <call method="setConnectionManager">
-                <argument type="service" id="kitano_connection.manager.connection"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
             </call>
             <tag name="doctrine.event_subscriber" />
         </service>
