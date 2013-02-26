@@ -5,9 +5,7 @@ namespace Kitano\ConnectionBundle\Repository;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
-use Kitano\ConnectionBundle\Proxy\DoctrineOrmConnection;
 use Kitano\ConnectionBundle\Model\NodeInterface;
-use Kitano\ConnectionBundle\Exception\NotSupportedNodeException;
 
 /**
  * ConnectionRepository
