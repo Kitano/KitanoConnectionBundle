@@ -5,6 +5,8 @@ namespace Kitano\ConnectionBundle\Tests\Manager;
 use Kitano\ConnectionBundle\Model\Connection;
 use Kitano\ConnectionBundle\Manager\FilterValidator;
 
+use Symfony\Component\Validator\Validation;
+
 class FilterValidatorTest extends \PHPUnit_Framework_TestCase
 {
     private $filterValidator;
@@ -13,6 +15,7 @@ class FilterValidatorTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->filterValidator = new FilterValidator();
+        $this->filterValidator->setValidator(Validation::createValidatorBuilder()->getValidator());
         self::$iteration++;
     }
 
@@ -35,9 +38,6 @@ class FilterValidatorTest extends \PHPUnit_Framework_TestCase
             ),
             array(
                 array('status' => Connection::STATUS_CONNECTED, 'type' => 'foo', 'depth' => 2),
-            ),
-            array(
-                array('status' => Connection::STATUS_CONNECTED, 'type' => 'foo', 'depth' => 2, 'bar' => 'baz')
             ),
         );
     }

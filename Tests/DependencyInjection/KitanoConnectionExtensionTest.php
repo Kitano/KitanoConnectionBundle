@@ -25,6 +25,7 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension = new KitanoConnectionExtension();
         
         $this->container->setDefinition('doctrine.orm.entity_manager', new Definition('stdClass')); // w00t
+        $this->container->setDefinition('validator', new Definition('stdClass')); // w00t
         $this->container->registerExtension($this->extension);
         
         $bundle = new KitanoConnectionBundle();
