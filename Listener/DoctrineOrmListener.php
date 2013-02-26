@@ -7,7 +7,7 @@ use Kitano\ConnectionBundle\Manager\ConnectionManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 
-class DoctrineOrmListener implements  EventSubscriber
+class DoctrineOrmListener implements EventSubscriber
 {
     /**
      *
