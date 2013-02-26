@@ -10,6 +10,7 @@ use Kitano\ConnectionBundle\Model\NodeInterface;
 class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Model\Connection';
+    const CONNECTION_TYPE = 'follow';
 
     /**
      * @var \Kitano\ConnectionBundle\Repository\ConnectionRepositoryInterface
@@ -29,6 +30,14 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
         
         parent::tearDown();
     }
+    
+    protected function getFilters()
+    {
+        return array (
+            'type' => self::CONNECTION_TYPE,
+            'status' => ConnectionInterface::STATUS_CONNECTED,
+        );
+    }
 
     public function testCreateEmptyConnectionReturnDoctrineOrmEntity()
     {
@@ -43,7 +52,8 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $connection->setSource($nodeSource);
         $connection->setDestination($nodeDestination);
-        $connection->setType(ConnectionInterface::STATUS_CONNECTED);
+        $connection->setStatus(ConnectionInterface::STATUS_CONNECTED);
+        $connection->setType(self::CONNECTION_TYPE);
         
         return $connection;
     }
@@ -57,8 +67,8 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
         
         $this->assertEquals($connection, $this->repository->update($connection));
         
-        $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource));
-        $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination));
+        $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
+        $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
     
     public function testDestroy()
@@ -71,8 +81,8 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($connection, $this->repository->update($connection));
         $this->assertEquals($this->repository, $this->repository->destroy($connection));
         
-        $this->assertNotContains($connection, $this->repository->getConnectionsWithSource($nodeSource));
-        $this->assertNotContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination));
+        $this->assertNotContains($connection, $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
+        $this->assertNotContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
     
     public function testGetConnectionsWithSource()
@@ -84,14 +94,14 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
         
         $this->repository->update($connection);
         
-        $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource));
+        $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
     }
     
     public function testGetConnectionsWithSourceNotContains()
     {
         $nodeSource = new Node(42);
         
-        $this->assertEquals(array(), $this->repository->getConnectionsWithSource($nodeSource));
+        $this->assertEquals(array(), $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
     }
     
     public function testGetConnectionsWithDestination()
@@ -103,13 +113,13 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
         
         $this->repository->update($connection);
         
-        $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination));
+        $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
     
     public function testGetConnectionsWithDestinationNotContains()
     {
         $nodeDestination = new Node(123);
         
-        $this->assertEquals(array(), $this->repository->getConnectionsWithDestination($nodeDestination));
+        $this->assertEquals(array(), $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
 }
