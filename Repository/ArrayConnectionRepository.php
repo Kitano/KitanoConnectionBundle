@@ -30,11 +30,6 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
         $this->connections = new ArrayCollection();
     }
     
-    public function getConnections()
-    {
-        return $this->connections;
-    }
-
     /**
      * @param NodeInterface $node
      * @param array         $filters
