@@ -33,7 +33,7 @@ class HomeController extends Controller {
 
         // User A wants to "follow" User B activity
         // User A clics "follow" button on User B profile page
-        $connectionManager->connect($userA, $userB, 'follow');
+        $connectionManager->create($userA, $userB, 'follow');
     }
 
     public function newPostAction() 
