@@ -3,11 +3,11 @@
 namespace Kitano\ConnectionBundle\Tests\Repository;
 
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
-use Kitano\ConnectionBundle\Repository\ArrayRepository;
+use Kitano\ConnectionBundle\Repository\ArrayConnectionRepository;
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 
-class ArrayRepositoryTest extends \PHPUnit_Framework_TestCase
+class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
 {
     const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Model\Connection';
 
@@ -20,7 +20,7 @@ class ArrayRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         
-        $this->repository = new ArrayRepository(static::CONNECTION_CLASS);
+        $this->repository = new ArrayConnectionRepository(static::CONNECTION_CLASS);
     }
 
     public function tearDown()

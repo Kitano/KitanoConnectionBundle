@@ -5,7 +5,7 @@ namespace Kitano\ConnectionBundle\Tests\Manager;
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Manager\ConnectionManager;
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
-use Kitano\ConnectionBundle\Repository\ArrayRepository;
+use Kitano\ConnectionBundle\Repository\ArrayConnectionRepository;
 
 class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
     const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Model\Connection';
@@ -19,7 +19,7 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
     {
         $this->connectionManager = new ConnectionManager();
         $this->connectionManager->setFilterValidator($this->getFilterValidatorMock());
-        $this->connectionManager->setConnectionRepository(new ArrayRepository(self::CONNECTION_CLASS));
+        $this->connectionManager->setConnectionRepository(new ArrayConnectionRepository(self::CONNECTION_CLASS));
     }
     
     protected function getFilterValidatorMock()

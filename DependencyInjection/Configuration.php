@@ -38,7 +38,7 @@ class Configuration implements ConfigurationInterface
      */
     private function addPersistenceSection(ArrayNodeDefinition $node)
     {
-        $supportedDrivers = array('doctrine_orm', 'doctrine_mongodb', 'custom');
+        $supportedDrivers = array('doctrine_orm', 'doctrine_mongodb', 'array', 'custom');
 
         $node
             ->children()
