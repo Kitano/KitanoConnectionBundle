@@ -26,7 +26,7 @@ class HomeController extends Controller {
 
     public function indexAction() 
     {
-        $connectionManager = $this->get("kitano.connection.manager");
+        $connectionManager = $this->get("kitano_connection.manager.connection");
 
         $userA = $userRepository->find(1);
         $userB = $bookRepository->find(42);
@@ -38,7 +38,7 @@ class HomeController extends Controller {
 
     public function newPostAction() 
     {
-        $connectionManager = $this->get("kitano.connection.manager");
+        $connectionManager = $this->get("kitano_connection.manager.connection");
 
         $userA = $userRepository->find(1);
 
