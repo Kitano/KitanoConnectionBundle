@@ -43,6 +43,12 @@ interface ConnectionInterface
     public function getStatus();
 
     /**
+     * Set the current connection state (i.e: connected, disconnected)
+     * @param integer $status
+     */
+    public function setStatus($status);
+
+    /**
      * Returns the "type" of this connection (user defined)
      * This type is used to identify the kind of connection which is linking a Node
      * to another (i.e: "like", "follow", ...)
