@@ -36,7 +36,7 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function create(NodeInterface $source, NodeInterface $destination, $type)
     {
-        if($this->areConnected($source, $destination)) {
+        if($this->areConnected($source, $destination, array('type' => $type))) {
             throw new AlreadyConnectedException();
         }
         
@@ -62,10 +62,6 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function destroy(ConnectionInterface $connection)
     {
-        if(!$this->areConnected($connection->getSource(), $connection->getDestination())) {
-            throw new NotConnectedException();
-        }
-        
         $connection->disconnect();
         
         if($this->dispatcher) {
@@ -85,7 +81,7 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function connect(ConnectionInterface $connection)
     {
-        if($this->areConnected($connection->getSource(), $connection->getDestination())) {
+        if(ConnectionInterface::STATUS_CONNECTED === $connection->getStatus()) {
             throw new AlreadyConnectedException();
         }
         
@@ -107,7 +103,7 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function disconnect(ConnectionInterface $connection)
     {
-        if(!$this->areConnected($connection->getSource(), $connection->getDestination())) {
+        if(ConnectionInterface::STATUS_DISCONNECTEDS === $connection->getStatus()) {
             throw new NotConnectedException();
         }
         
@@ -127,9 +123,10 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
-        $this->filterValidator->validateFilters($filters);
-
-        return false;
+        $connectionsTo = $this->getConnectionsTo($destination, $filters);
+        $connectionsFrom = $this->getConnectionsFrom($source, $filters);
+        
+        return (count(array_intersect($connectionsFrom, $connectionsTo)) > 0);
     }
     
     /**
