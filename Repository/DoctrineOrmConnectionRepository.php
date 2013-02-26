@@ -50,6 +50,11 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
         $queryBuilder->setParameter("objectClass", $objectClass);
         $queryBuilder->setParameter("objectId", $objectId);
         
+        if(array_key_exists('type', $filters)) {
+            $queryBuilder->andWhere("connection.type = :type");
+            $queryBuilder->setParameter("type", $filters['type']);
+        }
+        
         $connections = $queryBuilder->getQuery()->getResult();
         
         foreach($connections as $connection) {
@@ -77,6 +82,11 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
         $queryBuilder->andWhere("connection.destinationObjectId = :objectId");
         $queryBuilder->setParameter("objectClass", $objectClass);
         $queryBuilder->setParameter("objectId", $objectId);
+        
+        if(array_key_exists('type', $filters)) {
+            $queryBuilder->andWhere("connection.type = :type");
+            $queryBuilder->setParameter("type", $filters['type']);
+        }
         
         $connections = $queryBuilder->getQuery()->getResult();
         
