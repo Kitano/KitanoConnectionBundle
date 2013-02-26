@@ -50,19 +50,29 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
     
     public function testUpdate()
     {
-        $connection = $this->createConnection(new Node(42), new Node(123));
+        $nodeSource = new Node(42);
+        $nodeDestination = new Node(123);
+        
+        $connection = $this->createConnection($nodeSource, $nodeDestination);
         
         $this->assertEquals($connection, $this->repository->update($connection));
-        $this->assertTrue($this->repository->getConnections()->contains($connection));
+        
+        $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource));
+        $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination));
     }
     
     public function testDestroy()
     {
-        $connection = $this->createConnection(new Node(42), new Node(123));
+        $nodeSource = new Node(42);
+        $nodeDestination = new Node(123);
+        
+        $connection = $this->createConnection($nodeSource, $nodeDestination);
         
         $this->assertEquals($connection, $this->repository->update($connection));
         $this->assertEquals($this->repository, $this->repository->destroy($connection));
-        $this->assertFalse($this->repository->getConnections()->contains($connection));
+        
+        $this->assertNotContains($connection, $this->repository->getConnectionsWithSource($nodeSource));
+        $this->assertNotContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination));
     }
     
     public function testGetConnectionsWithSource()
