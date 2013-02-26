@@ -126,7 +126,16 @@ class ConnectionManager implements ConnectionManagerInterface
         $connectionsTo = $this->getConnectionsTo($destination, $filters);
         $connectionsFrom = $this->getConnectionsFrom($source, $filters);
         
-        return (count(array_intersect($connectionsFrom, $connectionsTo)) > 0);
+        $areConnected = false;
+        
+        foreach($connectionsFrom as $connectionFrom) {
+            if(in_array($connectionFrom, $connectionsTo, true)) {
+                $areConnected = true;
+                break;
+            }
+        }
+        
+        return $areConnected;
     }
     
     /**
@@ -155,7 +164,7 @@ class ConnectionManager implements ConnectionManagerInterface
     public function getConnectionsFrom(NodeInterface $node, array $filters = array())
     {
         $this->filterValidator->validateFilters($filters);
-
+        
         return $this->getConnectionRepository()->getConnectionsWithSource($node, $filters);
     }
     
