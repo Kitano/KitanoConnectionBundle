@@ -143,8 +143,6 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         $this->getEntityManager()->persist($nodeDestination);
         $this->getEntityManager()->flush();
         
-        var_dump($this->repository->getConnectionsWithDestination($nodeDestination));
-        
         $this->assertEquals(array(), $this->repository->getConnectionsWithDestination($nodeDestination));
     }
 }
