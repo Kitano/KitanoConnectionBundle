@@ -82,7 +82,9 @@ class OrmTestCase extends BaseOrmTestCase
     
     public function tearDown()
     {
-        $this->schemaTool->dropSchema($this->doctrineMetadata);
+        if($this->schemaTool) {
+            $this->schemaTool->dropSchema($this->doctrineMetadata);
+        }
     }
 
     protected function getDataSet()

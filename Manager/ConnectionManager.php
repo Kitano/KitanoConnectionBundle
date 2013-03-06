@@ -32,9 +32,10 @@ class ConnectionManager implements ConnectionManagerInterface
     
     /**
      * {@inheritDoc}
+     * 
      * @throws AlreadyConnectedException When connection from source to destination already exists
      */
-    public function create(NodeInterface $source, NodeInterface $destination, $type)
+    public function connect(NodeInterface $source, NodeInterface $destination, $type)
     {
         if($this->areConnected($source, $destination, array('type' => $type))) {
             throw new AlreadyConnectedException();
@@ -44,7 +45,6 @@ class ConnectionManager implements ConnectionManagerInterface
         $connection->setSource($source);
         $connection->setDestination($destination);
         $connection->setType($type);
-        $connection->connect();
         
         $this->getConnectionRepository()->update($connection);
         
@@ -60,10 +60,8 @@ class ConnectionManager implements ConnectionManagerInterface
      *
      * @return ConnectionManagerInterface
      */
-    public function destroy(ConnectionInterface $connection)
+    public function disconnect(ConnectionInterface $connection)
     {
-        $connection->disconnect();
-        
         if($this->dispatcher) {
             $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent(($connection)));
         }
@@ -73,51 +71,6 @@ class ConnectionManager implements ConnectionManagerInterface
         return $this;
     }
     
-    /**
-     * {@inheritDoc}
-     * @throws AlreadyConnectedException When connection is already in a connected state
-     *
-     * @return ConnectionManagerInterface
-     */
-    public function connect(ConnectionInterface $connection)
-    {
-        if(ConnectionInterface::STATUS_CONNECTED === $connection->getStatus()) {
-            throw new AlreadyConnectedException();
-        }
-        
-        $connection->connect();
-        $this->getConnectionRepository()->update($connection);
-        
-        if($this->dispatcher) {
-            $this->dispatcher->dispatch (ConnectionEvent::CONNECTED, new ConnectionEvent($connection));
-        }
-        
-        return $this;
-    }
-    
-    /**
-     * {@inheritDoc}
-     * @throws NotConnectedException When source and destination are not connected
-     *
-     * @return ConnectionManager
-     */
-    public function disconnect(ConnectionInterface $connection)
-    {
-        if(ConnectionInterface::STATUS_DISCONNECTEDS === $connection->getStatus()) {
-            throw new NotConnectedException();
-        }
-        
-        $connection->disconnect();
-        
-        $this->getConnectionRepository()->update($connection);
-        
-        if($this->dispatcher) {
-            $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent($connection));
-        }
-        
-        return $this;
-    }
- 
     /**
      * {@inheritDoc}
      */

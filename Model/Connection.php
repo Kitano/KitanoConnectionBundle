@@ -8,11 +8,6 @@ class Connection implements ConnectionInterface
     protected $destination;
     
     /**
-     * @var int
-     */
-    protected $status;
-    
-    /**
      * @var string
      */
     protected $type;
@@ -22,20 +17,9 @@ class Connection implements ConnectionInterface
      */
     protected $createdAt;
 
-    /**
-     * @var \DateTime
-     */
-    protected $disconnectedAt;
-
-    /**
-     * @var \DateTime
-     */
-    protected $connectedAt;
-    
     public function __construct()
     {
         $this->createdAt = new \DateTime();
-        $this->type = ConnectionInterface::STATUS_DISCONNECTED;
     }
     
     public function getSource()
@@ -45,7 +29,7 @@ class Connection implements ConnectionInterface
     
     public function setSource(NodeInterface $source)
     {
-        $this->source= $source;
+        $this->source = $source;
         
         return $this;
     }
@@ -57,28 +41,7 @@ class Connection implements ConnectionInterface
     
     public function setDestination(NodeInterface $destination)
     {
-        $this->destination= $destination;
-        
-        return $this;
-    }
-    
-    public function getStatus() 
-    {
-        return $this->status;
-    }
-    
-    public function setStatus($status) 
-    {
-        switch($status) {
-            case self::STATUS_DISCONNECTED:
-                $this->disconnect();
-                break;
-            case self::STATUS_CONNECTED:
-                $this->connect();
-                break;
-            default :
-                throw new \InvalidArgumentException(sprintf('"%s" is not a valid status.', $status));
-        }
+        $this->destination = $destination;
         
         return $this;
     }
@@ -95,30 +58,6 @@ class Connection implements ConnectionInterface
         return $this;
     }
     
-    public function getDisconnectedAt()
-    {
-        return $this->disconnectedAt;
-    }
-    
-    public function setDisconnectedAt(\DateTime $value) 
-    {
-        $this->disconnectedAt = $value;
-        
-        return $this;
-    }
-    
-    public function getConnectedAt()
-    {
-        return $this->connectedAt;
-    }
-    
-    public function setConnectedAt(\DateTime $value) 
-    {
-        $this->connectedAt = $value;
-        
-        return $this;
-    }
-    
     public function getCreatedAt()
     {
         return $this->createdAt;
@@ -127,22 +66,6 @@ class Connection implements ConnectionInterface
     public function setCreatedAt(\DateTime $value) 
     {
         $this->createdAt = $value;
-        
-        return $this;
-    }
-    
-    public function disconnect()
-    {
-        $this->status = self::STATUS_DISCONNECTED;
-        $this->disconnectedAt = new \DateTime();
-        
-        return $this;
-    }
-
-    public function connect()
-    {
-        $this->status = self::STATUS_CONNECTED;
-        $this->connectedAt = new \DateTime();
         
         return $this;
     }

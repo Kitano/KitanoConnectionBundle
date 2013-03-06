@@ -14,21 +14,7 @@ interface ConnectionManagerInterface
      *
      * @return ConnectionInterface
      */
-    public function create(NodeInterface $source, NodeInterface $destination, $type);
-    
-    /**
-     * @param ConnectionInterface $connection
-     * 
-     * @return ConnectionManagerInterface
-     */
-    public function destroy(ConnectionInterface $connection);
-    
-    /**
-     * @param ConnectionInterface $connection
-     * 
-     * @return ConnectionManagerInterface
-     */
-    public function connect(ConnectionInterface $connection);
+    public function connect(NodeInterface $source, NodeInterface $destination, $type);
     
     /**
      * @param ConnectionInterface $connection

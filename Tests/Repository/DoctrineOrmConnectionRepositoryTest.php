@@ -5,12 +5,12 @@ namespace Kitano\ConnectionBundle\Tests\Repository;
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Tests\OrmTestCase;
 use Kitano\ConnectionBundle\Repository\DoctrineOrmConnectionRepository;
-use Kitano\ConnectionBundle\Model\ConnectionInterface;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 
 class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
 {
     const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Entity\Connection';
+    const CONNECTION_TYPE = 'follow';
 
     /**
      * @var \Kitano\ConnectionBundle\Repository\ConnectionRepositoryInterface
@@ -64,7 +64,7 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
 
         $connection->setSource($nodeSource);
         $connection->setDestination($nodeDestination);
-        $connection->setType(ConnectionInterface::STATUS_CONNECTED);
+        $connection->setType(self::CONNECTION_TYPE);
         
         return $connection;
     }

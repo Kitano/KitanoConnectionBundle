@@ -35,7 +35,6 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         return array (
             'type' => self::CONNECTION_TYPE,
-            'status' => ConnectionInterface::STATUS_CONNECTED,
         );
     }
 
@@ -52,7 +51,6 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $connection->setSource($nodeSource);
         $connection->setDestination($nodeDestination);
-        $connection->setStatus(ConnectionInterface::STATUS_CONNECTED);
         $connection->setType(self::CONNECTION_TYPE);
         
         return $connection;

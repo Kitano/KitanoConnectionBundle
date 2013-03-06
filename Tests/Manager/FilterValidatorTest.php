@@ -33,12 +33,6 @@ class FilterValidatorTest extends \PHPUnit_Framework_TestCase
             array(
                 array('type' => array('foo', 'bar'))
             ),
-            array(
-                array('status' => Connection::STATUS_CONNECTED, 'type' => 'foo')
-            ),
-            array(
-                array('status' => Connection::STATUS_CONNECTED, 'type' => 'foo', 'depth' => 2),
-            ),
         );
     }
 
@@ -52,7 +46,10 @@ class FilterValidatorTest extends \PHPUnit_Framework_TestCase
                 array('type' => 'foo', 'status' => 'bar'),
             ),
             array(
-                array('status' => Connection::STATUS_CONNECTED),
+                array('status' => 0),
+            ),
+            array(
+                array('status' => 1, 'type' => 'foo', 'depth' => 2),
             ),
             array(
                 array('type' => 'foo', 'depth' => 'bar')

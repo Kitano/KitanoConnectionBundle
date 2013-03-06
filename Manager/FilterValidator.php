@@ -30,21 +30,11 @@ class FilterValidator
                 new NotBlank(),
                 new NotNull(),
             ),
-            'status' => new Choice(array(
-                'choices' => array(
-                    ConnectionInterface::STATUS_CONNECTED,
-                    ConnectionInterface::STATUS_DISCONNECTED,
-                ),
-                'min' => 0,
-                'max' => 1,
-                'strict' => true,
-            )),
             'depth' => new Type('integer'),
         ));
         
         $filtersDefault = array(
             'depth' => 1,
-            'status' => ConnectionInterface::STATUS_CONNECTED,
         );
         
         $filters = array_merge($filtersDefault, $filters);
