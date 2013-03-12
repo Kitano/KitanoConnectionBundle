@@ -24,6 +24,7 @@
     "require-dev": {
         "symfony/yaml": ">=2.0",
         "doctrine/orm": ">=2",
+        "doctrine/mongodb-odm": "1.0.0-BETA8",
         "beberlei/DoctrineExtensions": "dev-master"
     },
     "autoload": {

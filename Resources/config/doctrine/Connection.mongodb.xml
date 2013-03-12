@@ -1,0 +1,16 @@
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                    http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Kitano\ConnectionBundle\Document\Connection" collection="kitano_connections">
+        <field fieldName="id" id="true" />
+        <field name="source_foreign_key" type="string" />
+        <field name="source_object_class" type="string" />
+        <field name="destination_foreign_key" type="string" />
+        <field name="destination_object_class" type="string" />
+
+        <field name="type" type="string" />
+        <field name="created_at" type="date" />
+    </document>
+</doctrine-mongo-mapping>

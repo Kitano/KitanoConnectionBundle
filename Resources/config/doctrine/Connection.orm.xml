@@ -5,7 +5,7 @@
             <generator strategy="AUTO"/>
         </id>
 
-        <field name="sourceObjectId" type="string" column="source_forgein_key" length="255"/>
+        <field name="sourceObjectId" type="string" column="source_foreign_key" length="255"/>
         <field name="sourceObjectClass" type="string" column="source_object_class" length="255"/>
         <field name="destinationObjectId" type="string" column="destination_forgein_key" length="255"/>
         <field name="destinationObjectClass" type="string" column="destination_object_class" length="255"/>
