@@ -38,7 +38,7 @@ class ConnectionManager implements ConnectionManagerInterface
     public function connect(NodeInterface $source, NodeInterface $destination, $type)
     {
         if($this->areConnected($source, $destination, array('type' => $type))) {
-            throw new AlreadyConnectedException(sprintf('Objects %s and %s are already connected', get_class($source), get_class($destination)));
+            throw new AlreadyConnectedException(sprintf('Objects %s (%s) and %s (%s) are already connected', get_class($source), $source->getId(), get_class($destination),$destination->getId()));
         }
 
         $connection = $this->getConnectionRepository()->createEmptyConnection();
