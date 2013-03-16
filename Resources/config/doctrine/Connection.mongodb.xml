@@ -5,11 +5,8 @@
 
     <document name="Kitano\ConnectionBundle\Document\Connection" collection="kitano_connections">
         <field fieldName="id" id="true" />
-        <field name="source_foreign_key" type="string" />
-        <field name="source_object_class" type="string" />
-        <field name="destination_foreign_key" type="string" />
-        <field name="destination_object_class" type="string" />
-
+        <reference-one field="source" />
+        <reference-one field="destination" />
         <field name="type" type="string" />
         <field name="created_at" type="date" />
     </document>

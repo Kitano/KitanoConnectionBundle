@@ -2,9 +2,9 @@
 
 namespace Kitano\ConnectionBundle\Document;
 
-use Kitano\ConnectionBundle\Proxy\DoctrineMongoDBConnection;
+use Kitano\ConnectionBundle\Model\Connection as BaseConnection;
 
-class Connection extends DoctrineMongoDBConnection
+class Connection extends BaseConnection
 {
     private $id;
 

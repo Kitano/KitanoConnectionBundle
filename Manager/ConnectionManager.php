@@ -80,7 +80,7 @@ class ConnectionManager implements ConnectionManagerInterface
         $connectionsFrom = $this->getConnectionsFrom($source, $filters);
 
         $areConnected = false;
-        
+
         foreach($connectionsFrom as $connectionFrom) {
             if(in_array($connectionFrom, $connectionsTo, true)) {
                 $areConnected = true;
