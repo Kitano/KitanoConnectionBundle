@@ -11,7 +11,6 @@ use Kitano\ConnectionBundle\Event\ConnectionEvent;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 use Kitano\ConnectionBundle\Manager\FilterValidator;
 use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
-use Kitano\ConnectionBundle\Exception\NotConnectedException;
 
 class ConnectionManager implements ConnectionManagerInterface
 {
