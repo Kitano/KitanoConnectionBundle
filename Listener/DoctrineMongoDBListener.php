@@ -2,10 +2,12 @@
 
 namespace Kitano\ConnectionBundle\Listener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ODM\MongoDB\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Kitano\ConnectionBundle\Model\NodeInterface;
 
 class DoctrineMongoDBListener implements EventSubscriber
 {
@@ -27,7 +29,20 @@ class DoctrineMongoDBListener implements EventSubscriber
      */
     public function preRemove(LifecycleEventArgs $eventArgs)
     {
+        $document = $eventArgs->getDocument();
 
+        if($document instanceof NodeInterface)
+        {
+            if($this->getConnectionManager()->hasConnections($document)) {
+                $connections = $this->getConnectionManager()->getConnections($document);
+
+                foreach($connections as $connection) {
+                    $eventArgs->getDocumentManager()->remove($connection);
+                }
+
+                $eventArgs->getDocumentManager()->flush(); //Necessary
+            }
+        }
     }
 
     /**
