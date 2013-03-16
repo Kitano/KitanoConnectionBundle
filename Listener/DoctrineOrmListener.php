@@ -7,6 +7,8 @@ use Doctrine\Common\EventSubscriber;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Kitano\ConnectionBundle\Model\NodeInterface;
+
 class DoctrineOrmListener implements EventSubscriber
 {
     /**
@@ -28,15 +30,18 @@ class DoctrineOrmListener implements EventSubscriber
     public function preRemove(LifecycleEventArgs $eventArgs)
     {
         $entity = $eventArgs->getEntity();
-        
-        if($this->getConnectionManager()->hasConnections($entity)) {
-            $connections = $this->getConnectionManager()->getConnections($entity);
-            
-            foreach($connections as $connection) {
-                $eventArgs->getEntityManager()->remove($connection);
+
+        if($entity instanceof NodeInterface)
+        {
+            if($this->getConnectionManager()->hasConnections($entity)) {
+                $connections = $this->getConnectionManager()->getConnections($entity);
+
+                foreach($connections as $connection) {
+                    $eventArgs->getEntityManager()->remove($connection);
+                }
+
+                $eventArgs->getEntityManager()->flush(); //Necessary
             }
-            
-            $eventArgs->getEntityManager()->flush(); //Necessary
         }
     }
     
