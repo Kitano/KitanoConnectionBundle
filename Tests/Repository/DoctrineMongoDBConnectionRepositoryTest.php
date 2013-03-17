@@ -21,7 +21,7 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase
     {
         parent::setUp();
 
-        $this->repository = new DoctrineMongoDBConnectionRepository($this->documentManager, static::CONNECTION_CLASS);
+        $this->repository = new DoctrineMongoDBConnectionRepository($this->getDocumentManager(), static::CONNECTION_CLASS);
     }
 
     protected function createConnection(NodeInterface $nodeSource, NodeInterface $nodeDestination)

@@ -7,7 +7,8 @@ use Kitano\ConnectionBundle\Manager\ConnectionManager;
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
 use Kitano\ConnectionBundle\Repository\ArrayConnectionRepository;
 
-class ConnectionManagerTest extends \PHPUnit_Framework_TestCase {
+class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
+{
     const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Model\Connection';
     const CONNECTION_TYPE = 'follow';
     

@@ -9,6 +9,7 @@ use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\Mapping\Driver\XmlDriver;
 use Doctrine\ODM\MongoDB\SchemaManager;
 use Doctrine\Common\Persistence\Mapping\Driver\SymfonyFileLocator;
+use Doctrine\Common\EventManager;
 
 class MongoDBTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -65,7 +66,7 @@ class MongoDBTestCase extends \PHPUnit_Framework_TestCase
         $config->setMetadataDriverImpl($driver);
         $config->setMetadataCacheImpl(new ArrayCache());
 
-        return DocumentManager::create(new Connection(new \Mongo()),$config);
+        return DocumentManager::create(new Connection(new \Mongo()), $config, new EventManager());
     }
 
     public function getDocumentManager()
