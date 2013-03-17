@@ -7,10 +7,16 @@ use Doctrine\MongoDB\Connection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\Mapping\Driver\XmlDriver;
+use Doctrine\ODM\MongoDB\SchemaManager;
 use Doctrine\Common\Persistence\Mapping\Driver\SymfonyFileLocator;
 
 class MongoDBTestCase extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \Doctrine\ODM\MongoDB\DocumentManager
+     */
+    protected $documentManager;
+
     protected function setUp()
     {
         if (!class_exists('Mongo')) {
@@ -24,6 +30,15 @@ class MongoDBTestCase extends \PHPUnit_Framework_TestCase
         } catch (\MongoException $e) {
             $this->markTestSkipped('Unable to connect to Mongo.');
         }
+
+        $this->documentManager = $this->createDocumentManager();
+    }
+
+    protected function tearDown()
+    {
+        $cmf = $this->documentManager->getMetadataFactory();
+        $schemaManager = new SchemaManager($this->documentManager, $cmf);
+        $schemaManager->dropDatabases();
     }
 
     protected function createDocumentManager()
@@ -51,5 +66,10 @@ class MongoDBTestCase extends \PHPUnit_Framework_TestCase
         $config->setMetadataCacheImpl(new ArrayCache());
 
         return DocumentManager::create(new Connection(new \Mongo()),$config);
+    }
+
+    public function getDocumentManager()
+    {
+        return $this->documentManager;
     }
 }
