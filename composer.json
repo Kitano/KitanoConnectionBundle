@@ -14,6 +14,11 @@
             "name":     "Benjamin Dulau",
             "email":    "benjamin.dulau@gmail.com",
             "homepage": "http://www.anonymation.com"
+        },
+        {
+            "name":     "Valentin Ferriere",
+            "email":    "valentin.ferriere@gmail.com",
+            "homepage": "http://www.v-labs.fr"
         }
     ],
     "require": {
