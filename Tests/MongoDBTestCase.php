@@ -37,9 +37,12 @@ class MongoDBTestCase extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        $cmf = $this->documentManager->getMetadataFactory();
-        $schemaManager = new SchemaManager($this->documentManager, $cmf);
-        $schemaManager->dropDatabases();
+        if($this->documentManager instanceof DocumentManager)
+        {
+            $cmf = $this->documentManager->getMetadataFactory();
+            $schemaManager = new SchemaManager($this->documentManager, $cmf);
+            $schemaManager->dropDatabases();
+        }
     }
 
     protected function createDocumentManager()

@@ -1,5 +1,5 @@
-ConnectionBundle
-================
+ConnectionBundle        [![Build Status](https://travis-ci.org/Kitano/KitanoConnectionBundle.png?branch=master)](https://travis-ci.org/Kitano/KitanoConnectionBundle)
+=====================================================================================================================================================================
 
 State : Not working. Work In Progress
 
