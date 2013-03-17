@@ -55,5 +55,7 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase
 
         $this->assertEquals($connection, $this->repository->update($connection));
         $this->assertEquals($connection, $this->getDocumentManager()->find(self::CONNECTION_CLASS, $connection->getId()));
+        $this->assertEquals($connection->getSource(), $node1);
+        $this->assertEquals($connection->getDestination(), $node2),
     }
 }
