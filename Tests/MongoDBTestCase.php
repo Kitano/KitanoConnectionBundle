@@ -20,14 +20,14 @@ class MongoDBTestCase extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        if (!class_exists('Mongo')) {
+        if (!class_exists('MongoClient')) {
             $this->markTestSkipped('Mongo PHP/PECL Extension is not available.');
         }
         if (!class_exists('Doctrine\\ODM\\MongoDB\\Version')) {
             $this->markTestSkipped('Doctrine MongoDB ODM is not available.');
         }
         try {
-            new \Mongo();
+            new \MongoClient();
         } catch (\MongoException $e) {
             $this->markTestSkipped('Unable to connect to Mongo.');
         }
@@ -69,7 +69,7 @@ class MongoDBTestCase extends \PHPUnit_Framework_TestCase
         $config->setMetadataDriverImpl($driver);
         $config->setMetadataCacheImpl(new ArrayCache());
 
-        return DocumentManager::create(new Connection(new \Mongo()), $config, new EventManager());
+        return DocumentManager::create(new Connection(new \MongoClient()), $config, new EventManager());
     }
 
     public function getDocumentManager()
