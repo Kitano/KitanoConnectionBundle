@@ -25,6 +25,7 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension = new KitanoConnectionExtension();
         
         $this->container->setDefinition('doctrine.orm.entity_manager', new Definition('stdClass')); // w00t
+        $this->container->setDefinition('doctrine_mongodb.odm.document_manager', new Definition('stdClass')); // w00t
         $this->container->setDefinition('validator', new Definition('stdClass')); // w00t
         $this->container->registerExtension($this->extension);
         
@@ -77,7 +78,7 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
         $this->container->compile();
     }
     
-    public function testOrmPeristenceDefaultManagedClass()
+    public function testOrmPersistenceDefaultManagedClass()
     {
         $config = array(
             "kitano_connection" => array (
@@ -93,7 +94,7 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'Kitano\ConnectionBundle\Entity\Connection');
     }
     
-    public function testOrmPeristenceCustomManagedClass()
+    public function testOrmPersistenceCustomManagedClass()
     {
         $config = array(
             "kitano_connection" => array (
@@ -110,5 +111,40 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
         $this->container->compile();
         
         $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'My\Entity\Connection');
+    }
+
+    public function testMongoDBPersistenceDefaultManagedClass()
+    {
+        $config = array(
+            "kitano_connection" => array (
+                "persistence" => array (
+                    "type" => "doctrine_mongodb",
+                ),
+            ),
+        );
+
+        $this->extension->load($config, $this->container);
+        $this->container->compile();
+
+        $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'Kitano\ConnectionBundle\Document\Connection');
+    }
+
+    public function testMongoDBPersistenceCustomManagedClass()
+    {
+        $config = array(
+            "kitano_connection" => array (
+                "persistence" => array (
+                    "type" => "doctrine_mongodb",
+                    "managed_class" => array (
+                        "connection" => "My\Document\Connection",
+                    ),
+                ),
+            ),
+        );
+
+        $this->extension->load($config, $this->container);
+        $this->container->compile();
+
+        $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'My\Document\Connection');
     }
 }
