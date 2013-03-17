@@ -35,6 +35,11 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase
         return $connection;
     }
 
+    protected function createNode()
+    {
+        return new Node(new \MongoId());
+    }
+
     public function testCreateEmptyConnectionReturnDoctrineMongoDBDocument()
     {
         $connection = $this->repository->createEmptyConnection();
@@ -44,8 +49,8 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase
 
     public function testUpdate()
     {
-        $node1 = new Node(new \MongoId());
-        $node2 = new Node(new \MongoId());
+        $node1 = $this->createNode();
+        $node2 = $this->createNode();
 
         $this->getDocumentManager()->persist($node1);
         $this->getDocumentManager()->persist($node2);
@@ -56,6 +61,89 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase
         $this->assertEquals($connection, $this->repository->update($connection));
         $this->assertEquals($connection, $this->getDocumentManager()->find(self::CONNECTION_CLASS, $connection->getId()));
         $this->assertEquals($connection->getSource(), $node1);
-        $this->assertEquals($connection->getDestination(), $node2),
+        $this->assertEquals($connection->getDestination(), $node2);
+    }
+
+    public function testDestroy()
+    {
+        $node1 = $this->createNode();
+        $node2 = $this->createNode();
+
+        $this->getDocumentManager()->persist($node1);
+        $this->getDocumentManager()->persist($node2);
+        $this->getDocumentManager()->flush();
+
+        $connection = $this->createConnection($node1, $node2);
+
+        $this->assertEquals($connection, $this->repository->update($connection));
+
+        $id = $connection->getId();
+
+        $this->assertEquals($this->repository, $this->repository->destroy($connection));
+        $this->assertNull($this->getDocumentManager()->find(self::CONNECTION_CLASS, $id));
+    }
+
+    public function testGetConnectionsWithSource()
+    {
+        $node1 = $this->createNode();
+        $node2 = $this->createNode();
+
+        $this->getDocumentManager()->persist($node1);
+        $this->getDocumentManager()->persist($node2);
+        $this->getDocumentManager()->flush();
+
+        $connection = $this->createConnection($node1, $node2);
+
+        $this->repository->update($connection);
+
+        $this->assertContains($connection, $this->repository->getConnectionsWithSource($node1));
+        $this->assertContains($connection, $this->repository->getConnectionsWithSource($node1, array('type' => self::CONNECTION_TYPE)));
+    }
+
+    public function testGetConnectionsWithSourceNotContains()
+    {
+        $node1 = $this->createNode();
+        $node2 = $this->createNode();
+
+        $this->getDocumentManager()->persist($node1);
+        $this->getDocumentManager()->persist($node2);
+        $this->getDocumentManager()->flush();
+
+        $connection = $this->createConnection($node1, $node2);
+        $this->assertEquals($connection, $this->repository->update($connection));
+
+        $this->assertEmpty($this->repository->getConnectionsWithSource($node2));
+    }
+
+    public function testGetConnectionsWithDestination()
+    {
+        $node1 = $this->createNode();
+        $node2 = $this->createNode();
+
+        $this->getDocumentManager()->persist($node1);
+        $this->getDocumentManager()->persist($node2);
+        $this->getDocumentManager()->flush();
+
+        $connection = $this->createConnection($node1, $node2);
+
+        $this->repository->update($connection);
+
+        $this->assertContains($connection, $this->repository->getConnectionsWithDestination($node2));
+        $this->assertContains($connection, $this->repository->getConnectionsWithDestination($node2, array('type' => self::CONNECTION_TYPE)));
+    }
+
+    public function testGetConnectionsWithDestinationNotContains()
+    {
+        $node1 = $this->createNode();
+        $node2 = $this->createNode();
+
+        $this->getDocumentManager()->persist($node1);
+        $this->getDocumentManager()->persist($node2);
+        $this->getDocumentManager()->flush();
+
+        $connection = $this->createConnection($node1, $node2);
+        $this->assertEquals($connection, $this->repository->update($connection));
+
+        $this->assertEmpty($this->repository->getConnectionsWithDestination($node1));
     }
 }
