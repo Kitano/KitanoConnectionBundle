@@ -1,7 +1,7 @@
 ConnectionBundle        [![Build Status](https://travis-ci.org/Kitano/KitanoConnectionBundle.png?branch=master)](https://travis-ci.org/Kitano/KitanoConnectionBundle)
 =====================================================================================================================================================================
 
-State : Not working. Work In Progress
+State : Working. Unstable.
 
 Implementation of a directed Graph for establishing connections between objects.
 
