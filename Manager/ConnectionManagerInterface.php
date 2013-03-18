@@ -15,14 +15,14 @@ interface ConnectionManagerInterface
      * @return ConnectionInterface
      */
     public function connect(NodeInterface $source, NodeInterface $destination, $type);
-    
+
     /**
      * @param ConnectionInterface $connection
-     * 
+     *
      * @return ConnectionManagerInterface
      */
     public function disconnect(ConnectionInterface $connection);
-    
+
     /**
      * @param NodeInterface $source
      * @param NodeInterface $destination
@@ -31,7 +31,7 @@ interface ConnectionManagerInterface
      * @return boolean
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array());
-    
+
     /**
      * @param NodeInterface $node
      * @param array         $filters
@@ -39,7 +39,7 @@ interface ConnectionManagerInterface
      * @return boolean
      */
     public function hasConnections(NodeInterface $node, array $filters = array());
-    
+
     /**
      * @param NodeInterface $node
      * @param array         $filters
@@ -47,7 +47,7 @@ interface ConnectionManagerInterface
      * @return array
      */
     public function getConnectionsTo(NodeInterface $node, array $filters = array());
-    
+
     /**
      * @param NodeInterface $node
      * @param array         $filters
@@ -55,7 +55,7 @@ interface ConnectionManagerInterface
      * @return array
      */
     public function getConnectionsFrom(NodeInterface $node, array $filters = array());
-    
+
     /**
      * @param NodeInterface $node
      * @param array         $filters

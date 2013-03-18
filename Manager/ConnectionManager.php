@@ -18,7 +18,7 @@ class ConnectionManager implements ConnectionManagerInterface
      * @var ConnectionRepositoryInterface
      */
     protected $connectionRepository;
-    
+
     /**
      * @var EventDispatcherInterface
      */
@@ -28,15 +28,15 @@ class ConnectionManager implements ConnectionManagerInterface
      * @var FilterValidator
      */
     protected $filterValidator;
-    
+
     /**
      * {@inheritDoc}
-     * 
+     *
      * @throws AlreadyConnectedException When connection from source to destination already exists
      */
     public function connect(NodeInterface $source, NodeInterface $destination, $type)
     {
-        if($this->areConnected($source, $destination, array('type' => $type))) {
+        if ($this->areConnected($source, $destination, array('type' => $type))) {
             throw new AlreadyConnectedException(sprintf('Objects %s (%s) and %s (%s) are already connected', get_class($source), $source->getId(), get_class($destination),$destination->getId()));
         }
 
@@ -44,16 +44,16 @@ class ConnectionManager implements ConnectionManagerInterface
         $connection->setSource($source);
         $connection->setDestination($destination);
         $connection->setType($type);
-        
+
         $this->getConnectionRepository()->update($connection);
-        
-        if($this->dispatcher) {
+
+        if ($this->dispatcher) {
             $this->dispatcher->dispatch(ConnectionEvent::CONNECTED, new ConnectionEvent(($connection)));
         }
-        
+
         return $connection;
     }
-    
+
     /**
      * {@inheritDoc}
      *
@@ -61,15 +61,15 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function disconnect(ConnectionInterface $connection)
     {
-        if($this->dispatcher) {
+        if ($this->dispatcher) {
             $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent(($connection)));
         }
-        
+
         $this->getConnectionRepository()->destroy($connection);
-        
+
         return $this;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -80,8 +80,8 @@ class ConnectionManager implements ConnectionManagerInterface
 
         $areConnected = false;
 
-        foreach($connectionsFrom as $connectionFrom) {
-            if(in_array($connectionFrom, $connectionsTo, true)) {
+        foreach ($connectionsFrom as $connectionFrom) {
+            if (in_array($connectionFrom, $connectionsTo, true)) {
                 $areConnected = true;
                 break;
             }
@@ -89,7 +89,7 @@ class ConnectionManager implements ConnectionManagerInterface
 
         return $areConnected;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -116,10 +116,10 @@ class ConnectionManager implements ConnectionManagerInterface
     public function getConnectionsFrom(NodeInterface $node, array $filters = array())
     {
         $this->filterValidator->validateFilters($filters);
-        
+
         return $this->getConnectionRepository()->getConnectionsWithSource($node, $filters);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -129,11 +129,10 @@ class ConnectionManager implements ConnectionManagerInterface
 
         $connectionsFrom = $this->getConnectionsFrom($node, $filters);
         $connectionsTo = $this->getConnectionsTo($node, $filters);
-        
-        if(null === $connectionsFrom && null === $connectionsTo) {
+
+        if (null === $connectionsFrom && null === $connectionsTo) {
             return null;
-        }
-        else {
+        } else {
             return new ArrayCollection(array_merge((array) $connectionsFrom, (array) $connectionsTo));
         }
     }
@@ -145,7 +144,7 @@ class ConnectionManager implements ConnectionManagerInterface
     {
         $this->dispatcher = $dispatcher;
     }
-    
+
     /**
      * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
      */
@@ -153,7 +152,7 @@ class ConnectionManager implements ConnectionManagerInterface
     {
         return $this->dispatcher;
     }
-    
+
     /**
      * @param ConnectionRepositoryInterface $connectionRepository
      */
@@ -161,7 +160,7 @@ class ConnectionManager implements ConnectionManagerInterface
     {
         $this->connectionRepository = $connectionRepository;
     }
-    
+
     /**
      * @return ConnectionRepositoryInterface $connectionRepository
      */

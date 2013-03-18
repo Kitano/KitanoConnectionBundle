@@ -40,63 +40,63 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     public function getConnectionsWithSource(NodeInterface $node, array $filters = array())
     {
         $objectInformations = $this->extractMetadata($node);
-        
+
         $objectClass = $objectInformations["object_class"];
         $objectId = $objectInformations["object_id"];
-        
+
         $queryBuilder = $this->createQueryBuilder("connection");
         $queryBuilder->where("connection.sourceObjectClass = :objectClass");
         $queryBuilder->andWhere("connection.sourceObjectId = :objectId");
         $queryBuilder->setParameter("objectClass", $objectClass);
         $queryBuilder->setParameter("objectId", $objectId);
-        
-        if(array_key_exists('type', $filters)) {
+
+        if (array_key_exists('type', $filters)) {
             $queryBuilder->andWhere("connection.type = :type");
             $queryBuilder->setParameter("type", $filters['type']);
         }
-        
+
         $connections = $queryBuilder->getQuery()->getResult();
-        
-        foreach($connections as $connection) {
+
+        foreach ($connections as $connection) {
             $this->fillConnection($connection);
         }
-        
+
         return $connections;
     }
 
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array $filters
+     * @param array                                        $filters
      *
      * @return array
      */
     public function getConnectionsWithDestination(NodeInterface $node, array $filters = array())
     {
         $objectInformations = $this->extractMetadata($node);
-        
+
         $objectClass = $objectInformations["object_class"];
         $objectId = $objectInformations["object_id"];
-        
+
         $queryBuilder = $this->createQueryBuilder("connection");
         $queryBuilder->where("connection.destinationObjectClass = :objectClass");
         $queryBuilder->andWhere("connection.destinationObjectId = :objectId");
         $queryBuilder->setParameter("objectClass", $objectClass);
         $queryBuilder->setParameter("objectId", $objectId);
-        
-        if(array_key_exists('type', $filters)) {
+
+        if (array_key_exists('type', $filters)) {
             $queryBuilder->andWhere("connection.type = :type");
             $queryBuilder->setParameter("type", $filters['type']);
         }
-        
+
         $connections = $queryBuilder->getQuery()->getResult();
-        
-        foreach($connections as $connection) {
+
+        foreach ($connections as $connection) {
             $this->fillConnection($connection);
         }
-        
+
         return $connections;
     }
-    
+
     /**
      * @param ConnectionInterface $connection
      *
@@ -106,18 +106,18 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     {
         $sourceInformations = $this->extractMetadata($connection->getSource());
         $destinationInformations = $this->extractMetadata($connection->getDestination());
-        
+
         $connection->setSourceObjectId($sourceInformations["object_id"]);
         $connection->setSourceObjectClass($sourceInformations["object_class"]);
         $connection->setDestinationObjectId($destinationInformations["object_id"]);
         $connection->setDestinationObjectClass($destinationInformations["object_class"]);
-        
+
         $this->_em->persist($connection);
         $this->_em->flush();
-        
+
         return $connection;
     }
-    
+
     /**
      * @param ConnectionInterface $connection
      *
@@ -127,10 +127,10 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     {
         $this->_em->remove($connection);
         $this->_em->flush();
-        
+
         return $this;
     }
-    
+
     /**
      * @return ConnectionInterface
      */
@@ -138,7 +138,7 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     {
         return new $this->class();
     }
-    
+
     /**
      * @param NodeInterface $node
      *
@@ -147,19 +147,19 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     protected function extractMetadata(NodeInterface $node)
     {
         $classMetadata = $this->_em->getClassMetadata(get_class($node));
-        
+
         $ids = $classMetadata->getIdentifierValues($node);
-        
-        if(count($ids) > 1) {
+
+        if (count($ids) > 1) {
             throw new NotSupportedNodeException("Composed primary keys for: " . $classMetadata->getName());
         }
-        
+
         return array(
             'object_class' => $classMetadata->getName(),
             'object_id' => array_pop($ids),
         );
     }
-    
+
     /**
      * @param DoctrineOrmConnection $connection
      *
@@ -169,10 +169,10 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     {
         $source = $this->_em->getRepository($connection->getSourceObjectClass())->find($connection->getSourceObjectId());
         $destination = $this->_em->getRepository($connection->getDestinationObjectClass())->find($connection->getDestinationObjectId());
-        
+
         $connection->setSource($source);
         $connection->setDestination($destination);
-        
+
         return $connection;
     }
 }

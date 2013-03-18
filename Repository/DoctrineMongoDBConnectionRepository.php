@@ -38,7 +38,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
             ->field("source")->references($node)
         ;
 
-        if(array_key_exists('type', $filters)) {
+        if (array_key_exists('type', $filters)) {
             $qb->field('type')->equals($filters['type']);
         }
 
@@ -47,7 +47,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
 
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array $filters
+     * @param array                                        $filters
      *
      * @return array
      */
@@ -57,7 +57,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
             ->field('destination')->references($node)
         ;
 
-        if(array_key_exists("type", $filters)) {
+        if (array_key_exists("type", $filters)) {
             $qb->field("type")->equals($filters['type']);
         }
 

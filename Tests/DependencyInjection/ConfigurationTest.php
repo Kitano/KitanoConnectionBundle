@@ -23,7 +23,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             )
         ));
     }
-    
+
     public function testDoctrineOrmPersistenceType()
     {
         $processor = new Processor();
@@ -70,12 +70,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     ),
                 )
             ));
-        }
-        catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
+        } catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
             $this->assertEquals('kitano_connection.persistence.managed_class.connection', $exception->getPath());
         }
     }
-    
+
     public function testEmptyConnectionType()
     {
         $processor = new Processor();
@@ -89,12 +88,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     ),
                 )
             ));
-        }
-        catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
+        } catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
             $this->assertEquals('kitano_connection.persistence.type', $exception->getPath());
         }
     }
-    
+
     public function testEmptyPersistence()
     {
         $processor = new Processor();
@@ -107,23 +105,21 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     ),
                 )
             ));
-        }
-        catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
+        } catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
             $this->assertEquals('kitano_connection.persistence', $exception->getPath());
         }
     }
-    
+
     public function testEmptyConfiguration()
     {
         $processor = new Processor();
         $configuration = new Configuration(array());
-        
+
         try {
             $processor->processConfiguration($configuration, array(
                 array()
             ));
-        }
-        catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
+        } catch (\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException $exception) {
             $this->assertEquals('kitano_connection', $exception->getPath());
         }
     }

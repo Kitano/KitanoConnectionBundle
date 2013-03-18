@@ -13,7 +13,7 @@ use Kitano\ConnectionBundle\Model\NodeInterface;
 class ArrayConnectionRepository implements ConnectionRepositoryInterface
 {
     protected $class;
-    
+
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      */
@@ -24,7 +24,7 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
         $this->class = $class;
         $this->connections = new ArrayCollection();
     }
-    
+
     /**
      * @param NodeInterface $node
      * @param array         $filters
@@ -34,39 +34,39 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
     public function getConnectionsWithSource(NodeInterface $node, array $filters = array())
     {
         $connections = array();
-        
+
         foreach ($this->connections as $connection) {
-            if($node === $connection->getSource()) {
-                if(array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
+            if ($node === $connection->getSource()) {
+                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
                     $connections[] = $connection;
                 }
             }
         }
-        
+
         return $connections;
     }
 
     /**
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array $filters
+     * @param array                                        $filters
      *
      * @return array
      */
     public function getConnectionsWithDestination(NodeInterface $node, array $filters = array())
     {
         $connections = array();
-        
+
         foreach ($this->connections as $connection) {
-            if($node === $connection->getDestination()) {
-                if(array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
+            if ($node === $connection->getDestination()) {
+                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
                     $connections[] = $connection;
                 }
             }
         }
-        
+
         return $connections;
     }
-    
+
     /**
      * @param ConnectionInterface $connection
      *
@@ -74,13 +74,13 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
      */
     public function update(ConnectionInterface $connection)
     {
-        if(!$this->connections->contains($connection)) {
+        if (!$this->connections->contains($connection)) {
             $this->connections->add($connection);
         }
-        
+
         return $connection;
     }
-    
+
     /**
      * @param ConnectionInterface $connection
      *
@@ -88,13 +88,13 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
      */
     public function destroy(ConnectionInterface $connection)
     {
-        if($this->connections->contains($connection)) {
+        if ($this->connections->contains($connection)) {
             $this->connections->removeElement($connection);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * @return ConnectionInterface
      */

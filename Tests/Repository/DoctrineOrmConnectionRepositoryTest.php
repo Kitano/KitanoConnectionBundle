@@ -22,16 +22,16 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         if (!interface_exists('Doctrine\Common\Persistence\ObjectManager')) {
             $this->markTestSkipped('Doctrine Common has to be installed for this test to run.');
         }
-        
+
         parent::setUp();
-        
+
         $this->repository = new DoctrineOrmConnectionRepository($this->getEntityManager(), static::CONNECTION_CLASS);
     }
 
     public function tearDown()
     {
         unset($this->repository);
-        
+
         parent::tearDown();
     }
 
@@ -57,7 +57,7 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
 
         $this->assertEquals($metadata, $expectedMetadata);
     }
-    
+
     protected function createConnection(NodeInterface $nodeSource, NodeInterface $nodeDestination)
     {
         $connection = $this->repository->createEmptyConnection();
@@ -65,51 +65,51 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         $connection->setSource($nodeSource);
         $connection->setDestination($nodeDestination);
         $connection->setType(self::CONNECTION_TYPE);
-        
+
         return $connection;
     }
-    
+
     public function testUpdate()
     {
         $connection = $this->createConnection(new Node(42), new Node(123));
-        
+
         $this->assertEquals($connection, $this->repository->update($connection));
         $this->assertEquals($connection, $this->getEntityManager()->find(self::CONNECTION_CLASS, $connection->getId()));
     }
-    
+
     public function testDestroy()
     {
         $connection = $this->createConnection(new Node(42), new Node(123));
-        
+
         $this->assertEquals($connection, $this->repository->update($connection));
-        
+
         $id = $connection->getId();
-        
+
         $this->assertEquals($this->repository, $this->repository->destroy($connection));
         $this->assertNull($this->getEntityManager()->find(self::CONNECTION_CLASS, $id));
     }
-    
+
     public function testGetConnectionsWithSource()
     {
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
-        
+
         $this->getEntityManager()->persist($nodeSource);
         $this->getEntityManager()->persist($nodeDestination);
         $this->getEntityManager()->flush();
-        
+
         $connection = $this->createConnection($nodeSource, $nodeDestination);
-        
+
         $this->repository->update($connection);
-        
+
         $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource));
     }
-    
+
     public function testGetConnectionsWithSourceNotContains()
     {
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
-        
+
         $this->getEntityManager()->persist($nodeSource);
         $this->getEntityManager()->persist($nodeDestination);
         $this->getEntityManager()->flush();
@@ -117,32 +117,32 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         //TODO: Check getConnectionsWithSource return an array
         $this->assertEquals(array(), $this->repository->getConnectionsWithSource($nodeSource));
     }
-    
+
     public function testGetConnectionsWithDestination()
     {
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
-        
+
         $this->getEntityManager()->persist($nodeSource);
         $this->getEntityManager()->persist($nodeDestination);
         $this->getEntityManager()->flush();
-        
+
         $connection = $this->createConnection($nodeSource, $nodeDestination);
-        
+
         $this->repository->update($connection);
-        
+
         $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination));
     }
-    
+
     public function testGetConnectionsWithDestinationNotContains()
     {
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
-        
+
         $this->getEntityManager()->persist($nodeSource);
         $this->getEntityManager()->persist($nodeDestination);
         $this->getEntityManager()->flush();
-        
+
         $this->assertEquals(array(), $this->repository->getConnectionsWithDestination($nodeDestination));
     }
 }

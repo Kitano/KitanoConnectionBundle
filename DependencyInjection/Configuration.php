@@ -33,7 +33,7 @@ class Configuration implements ConfigurationInterface
      *     persistence:
      *         type:
      *
-     * @param ArrayNodeDefinition $node
+     * @param  ArrayNodeDefinition $node
      * @return void
      */
     private function addPersistenceSection(ArrayNodeDefinition $node)

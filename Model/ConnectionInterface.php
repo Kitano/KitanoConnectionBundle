@@ -54,7 +54,7 @@ interface ConnectionInterface
      * @return \DateTime
      */
     public function getCreatedAt();
-    
+
     /**
      * Set the date the connection was initially created at
      *

@@ -13,7 +13,7 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
      * @var \Symfony\Component\DependencyInjection\ContainerBuilder
      */
     private $container;
-    
+
     /**
      * @var \Kitano\ConnectionBundle\DependencyInjection\KitanoConnectionExtension
      */
@@ -23,12 +23,12 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->container = new ContainerBuilder();
         $this->extension = new KitanoConnectionExtension();
-        
+
         $this->container->setDefinition('doctrine.orm.entity_manager', new Definition('stdClass')); // w00t
         $this->container->setDefinition('doctrine_mongodb.odm.document_manager', new Definition('stdClass')); // w00t
         $this->container->setDefinition('validator', new Definition('stdClass')); // w00t
         $this->container->registerExtension($this->extension);
-        
+
         $bundle = new KitanoConnectionBundle();
         $bundle->build($this->container); // Attach all default factories
     }
@@ -37,7 +37,7 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
     {
         unset($this->container, $this->extension);
     }
-    
+
     public function testCustomConnectionManagedClass()
     {
         $config = array(
@@ -50,14 +50,13 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
         );
-        
+
         //User define a custom repository
         $this->container->setDefinition('kitano_connection.repository.connection', new Definition('My\CustomRepository'));
-        
-        
+
         $this->extension->load($config, $this->container);
         $this->container->compile();
-        
+
         $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'My\Entity\Connection');
     }
 
@@ -73,11 +72,11 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
         );
-        
+
         $this->extension->load($config, $this->container);
         $this->container->compile();
     }
-    
+
     public function testOrmPersistenceDefaultManagedClass()
     {
         $config = array(
@@ -87,13 +86,13 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
         );
-        
+
         $this->extension->load($config, $this->container);
         $this->container->compile();
-        
+
         $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'Kitano\ConnectionBundle\Entity\Connection');
     }
-    
+
     public function testOrmPersistenceCustomManagedClass()
     {
         $config = array(
@@ -106,10 +105,10 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
                 ),
             ),
         );
-        
+
         $this->extension->load($config, $this->container);
         $this->container->compile();
-        
+
         $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'My\Entity\Connection');
     }
 

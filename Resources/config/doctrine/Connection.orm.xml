@@ -9,7 +9,7 @@
         <field name="sourceObjectClass" type="string" column="source_object_class" length="255"/>
         <field name="destinationObjectId" type="string" column="destination_foreign_key" length="255"/>
         <field name="destinationObjectClass" type="string" column="destination_object_class" length="255"/>
-        
+
         <field name="type" type="string" column="type" length="255"/>
         <field name="createdAt" type="datetime" column="created_at" />
     </entity>

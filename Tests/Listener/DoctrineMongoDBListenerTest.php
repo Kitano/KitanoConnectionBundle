@@ -8,7 +8,6 @@ use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Document\Node;
 use Kitano\ConnectionBundle\Manager\ConnectionManager;
 use Kitano\ConnectionBundle\Listener\DoctrineMongoDBListener;
 
-
 class DoctrineMongoDBListenerTest extends MongoDBTestCase
 {
     const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Document\Connection';

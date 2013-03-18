@@ -64,8 +64,7 @@ class FilterValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->filterValidator->validateFilters($filters);
 
-        switch(self::$iteration)
-        {
+        switch (self::$iteration) {
             case 1:
                 $this->assertArrayHasKey('type', $filters);
                 $this->assertContains('foo', $filters['type']);

@@ -10,9 +10,9 @@ class ConnectionEvent extends EventBase
 {
     const CONNECTED = "kitano.connection.event.connected";
     const DISCONNECTED = "kitano.connection.event.disconnected";
-    
+
     private $connection;
-    
+
     public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;

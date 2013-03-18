@@ -22,9 +22,9 @@ class OrmTestCase extends BaseOrmTestCase
      * @var \Doctrine\ORM\Tools\SchemaTool
      */
     private $schemaTool;
-    
+
     private $doctrineMetadata;
-    
+
     /**
      * @return \Doctrine\ORM\EntityManager
      */
@@ -71,18 +71,18 @@ class OrmTestCase extends BaseOrmTestCase
 
         return $em;
     }
-    
-    public function setUp () 
+
+    public function setUp ()
     {
         $this->doctrineMetadata = $this->getEntityManager()->getMetadataFactory()->getAllMetadata();
-        
+
         $this->schemaTool = new SchemaTool($this->getEntityManager());
         $this->schemaTool->createSchema($this->doctrineMetadata);
     }
-    
+
     public function tearDown()
     {
-        if($this->schemaTool) {
+        if ($this->schemaTool) {
             $this->schemaTool->dropSchema($this->doctrineMetadata);
         }
     }

@@ -31,12 +31,11 @@ class DoctrineMongoDBListener implements EventSubscriber
     {
         $document = $eventArgs->getDocument();
 
-        if($document instanceof NodeInterface)
-        {
-            if($this->getConnectionManager()->hasConnections($document)) {
+        if ($document instanceof NodeInterface) {
+            if ($this->getConnectionManager()->hasConnections($document)) {
                 $connections = $this->getConnectionManager()->getConnections($document);
 
-                foreach($connections as $connection) {
+                foreach ($connections as $connection) {
                     $eventArgs->getDocumentManager()->remove($connection);
                 }
 

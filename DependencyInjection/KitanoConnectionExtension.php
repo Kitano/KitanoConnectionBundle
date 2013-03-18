@@ -6,7 +6,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -37,7 +36,7 @@ class KitanoConnectionExtension extends Extension
             $loader->load(sprintf('persistence/%s.xml', $config['persistence']['type']));
 
             if (!$container->hasParameter('kitano_connection.managed_class.connection')) {
-                switch($config['persistence']['type']) {
+                switch ($config['persistence']['type']) {
                     case 'doctrine_orm':
                         $container->setParameter('kitano_connection.managed_class.connection', 'Kitano\ConnectionBundle\Entity\Connection');
                         break;

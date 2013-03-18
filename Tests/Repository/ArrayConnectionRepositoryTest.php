@@ -4,7 +4,6 @@ namespace Kitano\ConnectionBundle\Tests\Repository;
 
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Repository\ArrayConnectionRepository;
-use Kitano\ConnectionBundle\Model\ConnectionInterface;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 
 class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
@@ -20,17 +19,17 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        
+
         $this->repository = new ArrayConnectionRepository(static::CONNECTION_CLASS);
     }
 
     public function tearDown()
     {
         unset($this->repository);
-        
+
         parent::tearDown();
     }
-    
+
     protected function getFilters()
     {
         return array (
@@ -52,72 +51,72 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
         $connection->setSource($nodeSource);
         $connection->setDestination($nodeDestination);
         $connection->setType(self::CONNECTION_TYPE);
-        
+
         return $connection;
     }
-    
+
     public function testUpdate()
     {
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
-        
+
         $connection = $this->createConnection($nodeSource, $nodeDestination);
-        
+
         $this->assertEquals($connection, $this->repository->update($connection));
-        
+
         $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
         $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
-    
+
     public function testDestroy()
     {
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
-        
+
         $connection = $this->createConnection($nodeSource, $nodeDestination);
-        
+
         $this->assertEquals($connection, $this->repository->update($connection));
         $this->assertEquals($this->repository, $this->repository->destroy($connection));
-        
+
         $this->assertNotContains($connection, $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
         $this->assertNotContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
-    
+
     public function testGetConnectionsWithSource()
     {
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
-        
+
         $connection = $this->createConnection($nodeSource, $nodeDestination);
-        
+
         $this->repository->update($connection);
-        
+
         $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
     }
-    
+
     public function testGetConnectionsWithSourceNotContains()
     {
         $nodeSource = new Node(42);
-        
+
         $this->assertEquals(array(), $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
     }
-    
+
     public function testGetConnectionsWithDestination()
     {
         $nodeSource = new Node(42);
         $nodeDestination = new Node(123);
-        
+
         $connection = $this->createConnection($nodeSource, $nodeDestination);
-        
+
         $this->repository->update($connection);
-        
+
         $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
-    
+
     public function testGetConnectionsWithDestinationNotContains()
     {
         $nodeDestination = new Node(123);
-        
+
         $this->assertEquals(array(), $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
 }
