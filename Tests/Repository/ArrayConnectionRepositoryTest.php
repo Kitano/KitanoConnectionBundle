@@ -6,7 +6,7 @@ use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Repository\ArrayConnectionRepository;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 
-class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
+class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase implements ConnectionRepositoryTestInterface
 {
     const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Model\Connection';
     const CONNECTION_TYPE = 'follow';
@@ -37,7 +37,7 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCreateEmptyConnectionReturnDoctrineOrmEntity()
+    public function testCreateEmptyConnectionReturn()
     {
         $connection = $this->repository->createEmptyConnection();
 

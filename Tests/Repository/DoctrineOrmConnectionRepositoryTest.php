@@ -7,7 +7,7 @@ use Kitano\ConnectionBundle\Tests\OrmTestCase;
 use Kitano\ConnectionBundle\Repository\DoctrineOrmConnectionRepository;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 
-class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
+class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements ConnectionRepositoryTestInterface
 {
     const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Entity\Connection';
     const CONNECTION_TYPE = 'follow';
@@ -35,7 +35,7 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase
         parent::tearDown();
     }
 
-    public function testCreateEmptyConnectionReturnDoctrineOrmEntity()
+    public function testCreateEmptyConnectionReturn()
     {
         $connection = $this->repository->createEmptyConnection();
 

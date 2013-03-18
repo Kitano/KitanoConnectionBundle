@@ -7,7 +7,7 @@ use Kitano\ConnectionBundle\Model\NodeInterface;
 use Kitano\ConnectionBundle\Tests\MongoDBTestCase;
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Document\Node;
 
-class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase
+class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase implements ConnectionRepositoryTestInterface
 {
     const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Document\Connection';
     const CONNECTION_TYPE = 'like';
@@ -40,7 +40,7 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase
         return new Node(new \MongoId());
     }
 
-    public function testCreateEmptyConnectionReturnDoctrineMongoDBDocument()
+    public function testCreateEmptyConnectionReturn()
     {
         $connection = $this->repository->createEmptyConnection();
 
