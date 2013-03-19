@@ -24,6 +24,8 @@ interface ConnectionManagerInterface
     public function disconnect(ConnectionInterface $connection);
 
     /**
+     * Check if source node is connect to destination node or vice-versa.
+     * 
      * @param NodeInterface $source
      * @param NodeInterface $destination
      * @param array         $filters
@@ -32,6 +34,18 @@ interface ConnectionManagerInterface
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array());
 
+    /**
+     * Check if source node is connect to destination node.
+     * Take care of the orientation.
+     * 
+     * @param NodeInterface $source
+     * @param NodeInterface $destination
+     * @param array         $filters
+     *
+     * @return boolean
+     */
+    public function isConnectedTo(NodeInterface $source, NodeInterface $destination, array $filters = array());
+    
     /**
      * @param NodeInterface $node
      * @param array         $filters

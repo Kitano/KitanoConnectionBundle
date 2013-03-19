@@ -118,8 +118,26 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $this->connectionManager->connect($nodeA, $nodeD, "view");
 
         $this->assertTrue($this->connectionManager->areConnected($nodeA, $nodeB, array('type' => 'follow')));
+        $this->assertFalse($this->connectionManager->areConnected($nodeB, $nodeA, array('type' => 'follow')));
         $this->assertFalse($this->connectionManager->areConnected($nodeA, $nodeC, array('type' => 'follow')));
-
         $this->assertFalse($this->connectionManager->areConnected($nodeC, $nodeA, array('type' => 'like')));
+    }
+    
+    public function testIsConnectedToSuccess()
+    {
+        $this->assertTrue(method_exists($this->connectionManager, 'isConnectedTo'));
+        
+        $nodeA = new Node();
+        $nodeB = new Node();
+        $nodeC = new Node();
+
+        $this->connectionManager->connect($nodeA, $nodeB, "follow");
+        $this->connectionManager->connect($nodeA, $nodeC, "like");
+
+        $this->assertTrue($this->connectionManager->isConnectedTo($nodeA, $nodeB, array('type' => 'follow')));
+        $this->assertFalse($this->connectionManager->isConnectedTo($nodeB, $nodeA, array('type' => 'follow')));
+        
+        $this->assertFalse($this->connectionManager->isConnectedTo($nodeA, $nodeB, array('type' => 'like')));
+        $this->assertFalse($this->connectionManager->isConnectedTo($nodeB, $nodeA, array('type' => 'like')));
     }
 }

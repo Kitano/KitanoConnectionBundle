@@ -89,6 +89,25 @@ class ConnectionManager implements ConnectionManagerInterface
 
         return $areConnected;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function isConnectedTo(NodeInterface $source, NodeInterface $destination, array $filters = array())
+    {
+        $connectionsTo = $this->getConnectionsTo($destination, $filters);
+
+        $areConnected = false;
+
+        foreach ($connectionsTo as $connectionFrom) {
+            if (in_array($connectionFrom, $connectionsTo, true)) {
+                $areConnected = true;
+                break;
+            }
+        }
+
+        return $areConnected;
+    }
 
     /**
      * {@inheritDoc}
