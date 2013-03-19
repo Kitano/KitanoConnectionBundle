@@ -54,6 +54,48 @@ class HomeController extends Controller {
 
 ```
 
+Configuration
+------------
+
+A simple configuration could be something like that
+
+```yml
+kitano_connection:
+    persistence:
+        type: doctrine_orm
+```
+
+Using this configuration, you can use KitanoConnectionBundle as the [Use Case](#use-case) example.
+
+After configuration, don't forget to update your RDBMS schema
+``` bash
+$ php app/console doctrine:schema:update
+```
+
+If you want a custom connection system
+```yml
+kitano_connection:
+    persistence:
+        type: doctrine_orm
+        managed_class: "Acme\Entity\Connection"
+```
+
+In this case, don't forget to define an entity schema for **Acme\Entity\Connection**
+
+If you want to use a custom repository, use the above configuration and define a service named : **kitano_connection.repository.connection**
+```yml
+kitano_connection:
+    persistence:
+        type: custom
+        managed_class: "Acme\Entity\Connection"
+```
+
+Events
+------
+
+Events are availble if you want to hook the system.
+
+
 License
 -------
 
