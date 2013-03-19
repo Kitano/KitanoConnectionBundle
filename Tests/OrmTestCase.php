@@ -30,6 +30,10 @@ class OrmTestCase extends BaseOrmTestCase
      */
     protected function createEntityManager()
     {
+        if (!class_exists('Doctrine\\ORM\\Version')) {
+            $this->markTestSkipped('Doctrine ORM is not available.');
+        }
+        
         // event manager used to create schema before tests
         $eventManager = new EventManager();
         $eventManager->addEventListener(array("preTestSetUp"), new SchemaSetupListener());
