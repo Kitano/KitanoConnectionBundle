@@ -55,7 +55,9 @@ class HomeController extends Controller {
 ```
 
 Configuration
-------------
+-------------
+
+**a) Short functional example**
 
 A simple configuration could be something like that
 
@@ -72,7 +74,9 @@ After configuration, don't forget to update your RDBMS schema
 $ php app/console doctrine:schema:update
 ```
 
-If you want a custom connection system
+**b) Custom connection**
+
+If you want a custom connection entity.
 ```yml
 kitano_connection:
     persistence:
@@ -81,6 +85,8 @@ kitano_connection:
 ```
 
 In this case, don't forget to define an entity schema for **Acme\Entity\Connection**
+
+**c) Custom connection with a custom peristance layer**
 
 If you want to use a custom repository, use the above configuration and define a service named : **kitano_connection.repository.connection**
 ```yml
@@ -95,6 +101,60 @@ Events
 
 Events are availble if you want to hook the system.
 
+```php
+namespace Acme\DemoBundle\Event;
+
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+
+use Kitano\ConnectionBundle\Event\ConnectionEvent;
+
+class ConnectionSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents()
+    {
+        return array(
+            'kitano.connection.event.connected"' => array('onConnected', 0),
+            'kitano.connection.event.disconnected"' => array('onDisconnected', 0),
+        );
+    }
+
+    public function onConnected(ConnectionEvent $event)
+    {
+        $connection = $event->getConnection();
+        // ...
+    }
+
+    public function onDisconnected(ConnectionEvent $event)
+    {
+        $connection = $event->getConnection();
+        // ...
+    }
+}
+```
+
+```xml
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="acme.demo.connection_subscriber.class">Acme\DemoBundle\Event\ConnectionSubscriber</parameter>
+    </parameters>
+
+    <services>
+        <!-- listener -->
+        <service id="acme.demo.connection_subscriber" class="%acme.demo.connection_subscriber.class%" public="false">
+            <tag name="doctrine.event_subscriber" />
+        </service>
+    </services>
+</container>
+```
+
+Limitations
+-----------
+
+* This bundle can deal with only one peristance layer. It means that you can't Connect a Document object with an Entity object.
 
 License
 -------
