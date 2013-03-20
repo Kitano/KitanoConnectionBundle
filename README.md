@@ -88,13 +88,16 @@ In this case, don't forget to define an entity schema for **Acme\Entity\Connecti
 
 **c) Custom connection with a custom peristance layer**
 
-If you want to use a custom repository, use the above configuration and define a service named : **kitano_connection.repository.connection**
+If you want to use a custom repository, use the above configuration.
+
 ```yml
 kitano_connection:
     persistence:
         type: custom
         managed_class: "Acme\Entity\Connection"
 ```
+
+Define a service named : **kitano_connection.repository.connection** which implement Kitano\ConnectionBundle\Repository\ConnectionRepositoryInterface
 
 Events
 ------
