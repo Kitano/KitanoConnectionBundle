@@ -37,6 +37,9 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase implemen
         );
     }
 
+    /**
+     * @group array
+     */
     public function testCreateEmptyConnectionReturn()
     {
         $connection = $this->repository->createEmptyConnection();
@@ -55,6 +58,9 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase implemen
         return $connection;
     }
 
+    /**
+     * @group array
+     */
     public function testUpdate()
     {
         $nodeSource = new Node(42);
@@ -68,6 +74,9 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase implemen
         $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
 
+    /**
+     * @group array
+     */
     public function testDestroy()
     {
         $nodeSource = new Node(42);
@@ -82,6 +91,9 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase implemen
         $this->assertNotContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
 
+    /**
+     * @group array
+     */
     public function testGetConnectionsWithSource()
     {
         $nodeSource = new Node(42);
@@ -94,6 +106,9 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase implemen
         $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
     }
 
+    /**
+     * @group array
+     */
     public function testGetConnectionsWithSourceNotContains()
     {
         $nodeSource = new Node(42);
@@ -101,6 +116,9 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase implemen
         $this->assertEquals(array(), $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
     }
 
+    /**
+     * @group array
+     */
     public function testGetConnectionsWithDestination()
     {
         $nodeSource = new Node(42);
@@ -113,10 +131,72 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase implemen
         $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
     }
 
+    /**
+     * @group array
+     */
     public function testGetConnectionsWithDestinationNotContains()
     {
         $nodeDestination = new Node(123);
 
         $this->assertEquals(array(), $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));
+    }
+
+    /**
+     * @group array
+     */
+    public function testAreConnected()
+    {
+        $node1 = new Node(455);
+        $node2 = new Node(4412);
+        $node3 = new Node(4244);
+
+        $connection1 = $this->createConnection($node1, $node2);
+        $connection2 = $this->createConnection($node2, $node1);
+        $connection3 = $this->createConnection($node1, $node3);
+
+        $this->repository->update($connection1);
+        $this->repository->update($connection2);
+        $this->repository->update($connection3);
+
+        $this->assertCount(1, $this->repository->areConnected($node1, $node2, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(1, $this->repository->areConnected($node2, $node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(1, $this->repository->areConnected($node1, $node3, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(0, $this->repository->areConnected($node2, $node3, array('type' => self::CONNECTION_TYPE)));
+
+        $this->assertContains($connection1, $this->repository->areConnected($node1, $node2, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection2, $this->repository->areConnected($node2, $node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection3, $this->repository->areConnected($node1, $node3, array('type' => self::CONNECTION_TYPE)));
+
+        $this->assertNotContains($connection3, $this->repository->areConnected($node3, $node1, array('type' => self::CONNECTION_TYPE)));
+    }
+
+    /**
+     * @group array
+     */
+    public function testGetConnections()
+    {
+        $node1 = new Node(455);
+        $node2 = new Node(4412);
+        $node3 = new Node(4244);
+
+        $connection1 = $this->createConnection($node1, $node2);
+        $connection2 = $this->createConnection($node2, $node1);
+        $connection3 = $this->createConnection($node1, $node3);
+
+        $this->repository->update($connection1);
+        $this->repository->update($connection2);
+        $this->repository->update($connection3);
+
+        $this->assertCount(3, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(2, $this->repository->getConnections($node2, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(1, $this->repository->getConnections($node3, array('type' => self::CONNECTION_TYPE)));
+
+        $this->assertContains($connection1, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection2, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection3, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection3, $this->repository->getConnections($node3, array('type' => self::CONNECTION_TYPE)));
+
+        $this->assertNotContains($connection3, $this->repository->getConnections($node2, array('type' => self::CONNECTION_TYPE)));
+        $this->assertNotContains($connection2, $this->repository->getConnections($node3, array('type' => self::CONNECTION_TYPE)));
     }
 }

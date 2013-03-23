@@ -98,6 +98,92 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     }
 
     /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
+     * @param array $filters
+     * @return array
+     */
+    public function getConnections(NodeInterface $node, array $filters = array())
+    {
+        $nodeInformations = $this->extractMetadata($node);
+
+        $dqlQuery = 'SELECT c
+          FROM Kitano\ConnectionBundle\Entity\Connection c
+          WHERE (
+              ((c.sourceObjectId = :nodeId AND c.sourceObjectClass = :nodeClass))
+            OR
+              ((c.destinationObjectId = :nodeId AND c.destinationObjectClass = :nodeClass))
+          )
+        ';
+
+        if (array_key_exists('type', $filters)) {
+            $dqlQuery.= ' AND c.type = :type';
+        }
+
+        $query = $this->_em->createQuery($dqlQuery);
+
+        $query->setParameters(array(
+            'nodeClass' => $nodeInformations['object_class'],
+            'nodeId' => $nodeInformations['object_id'],
+        ));
+
+        if (array_key_exists('type', $filters)) {
+            $query->setParameter("type", $filters['type']);
+        }
+
+        $connections = $query->getResult();
+
+        foreach ($connections as $connection) {
+            $this->fillConnection($connection);
+        }
+
+        return $connections;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node1
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node2
+     * @param array $filters
+     * @return array
+     */
+    public function areConnected(NodeInterface $node1, NodeInterface $node2, array $filters = array())
+    {
+        $node1Informations = $this->extractMetadata($node1);
+        $node2Informations = $this->extractMetadata($node2);
+
+        $dqlQuery = 'SELECT c
+          FROM Kitano\ConnectionBundle\Entity\Connection c
+          WHERE (
+              ((c.sourceObjectId = :node1Id AND c.sourceObjectClass = :node1Class) AND (c.destinationObjectId = :node2Id AND c.destinationObjectClass = :node2Class))
+          )
+        ';
+
+        if (array_key_exists('type', $filters)) {
+            $dqlQuery.= ' AND c.type = :type';
+        }
+
+        $query = $this->_em->createQuery($dqlQuery);
+
+        $query->setParameters(array(
+            'node1Class' => $node1Informations['object_class'],
+            'node2Class' => $node2Informations['object_class'],
+            'node1Id' => $node1Informations['object_id'],
+            'node2Id' => $node2Informations['object_id'],
+        ));
+
+        if (array_key_exists('type', $filters)) {
+            $query->setParameter("type", $filters['type']);
+        }
+
+        $connections = $query->getResult();
+
+        foreach ($connections as $connection) {
+            $this->fillConnection($connection);
+        }
+
+        return $connections;
+    }
+
+    /**
      * @param ConnectionInterface $connection
      *
      * @return ConnectionInterface

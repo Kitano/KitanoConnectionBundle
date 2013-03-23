@@ -65,6 +65,51 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
     }
 
     /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
+     * @param array $filters
+     * @return array
+     */
+    public function getConnections(NodeInterface $node, array $filters = array())
+    {
+        $qb = $this->createQueryBuilder('Connection');
+
+        $qb->addOr(
+            $qb->expr()
+                ->field("source")->references($node)
+        )
+            ->addOr(
+            $qb->expr()
+                ->field("destination")->references($node)
+        );
+
+        if (array_key_exists('type', $filters)) {
+            $qb->field('type')->equals($filters['type']);
+        }
+
+        return $qb->getQuery()->execute()->toArray();
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node1
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node2
+     * @param array $filters
+     * @return array
+     */
+    public function areConnected(NodeInterface $node1, NodeInterface $node2, array $filters = array())
+    {
+        $qb = $this->createQueryBuilder('Connection')
+            ->field("source")->references($node1)
+            ->field("destination")->references($node2)
+        ;
+
+        if (array_key_exists('type', $filters)) {
+            $qb->field('type')->equals($filters['type']);
+        }
+
+        return $qb->getQuery()->execute()->toArray();
+    }
+
+    /**
      * @param ConnectionInterface $connection
      *
      * @return ConnectionInterface

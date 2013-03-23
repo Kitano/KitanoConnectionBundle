@@ -68,6 +68,53 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
     }
 
     /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
+     * @param array $filters
+     * @return array|void
+     */
+    public function getConnections(NodeInterface $node, array $filters = array())
+    {
+        $connections = new ArrayCollection();
+
+        foreach ($this->connections as $connection) {
+            if ($node === $connection->getDestination()) {
+                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
+                    $connections[] = $connection;
+                }
+            }
+
+            if ($node === $connection->getSource()) {
+                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
+                    $connections[] = $connection;
+                }
+            }
+        }
+
+        return $connections;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node1
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node2
+     * @param array $filters
+     * @return array|void
+     */
+    public function areConnected(NodeInterface $node1, NodeInterface $node2, array $filters = array())
+    {
+        $connections = new ArrayCollection();
+
+        foreach ($this->connections as $connection) {
+            if ($node1 === $connection->getSource() &&$node2 === $connection->getDestination()) {
+                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
+                    $connections[] = $connection;
+                }
+            }
+        }
+
+        return $connections;
+    }
+
+    /**
      * @param ConnectionInterface $connection
      *
      * @return ConnectionInterface

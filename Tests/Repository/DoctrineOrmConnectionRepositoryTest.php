@@ -35,6 +35,9 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         parent::tearDown();
     }
 
+    /**
+     * @group orm
+     */
     public function testCreateEmptyConnectionReturn()
     {
         $connection = $this->repository->createEmptyConnection();
@@ -42,6 +45,9 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         $this->assertInstanceOf(static::CONNECTION_CLASS, $connection);
     }
 
+    /**
+     * @group orm
+     */
     public function testExtractedClassMetadata()
     {
         $node = new Node();
@@ -69,6 +75,9 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         return $connection;
     }
 
+    /**
+     * @group orm
+     */
     public function testUpdate()
     {
         $connection = $this->createConnection(new Node(42), new Node(123));
@@ -77,6 +86,9 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         $this->assertEquals($connection, $this->getEntityManager()->find(self::CONNECTION_CLASS, $connection->getId()));
     }
 
+    /**
+     * @group orm
+     */
     public function testDestroy()
     {
         $connection = $this->createConnection(new Node(42), new Node(123));
@@ -89,6 +101,9 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         $this->assertNull($this->getEntityManager()->find(self::CONNECTION_CLASS, $id));
     }
 
+    /**
+     * @group orm
+     */
     public function testGetConnectionsWithSource()
     {
         $nodeSource = new Node(42);
@@ -105,6 +120,9 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         $this->assertContains($connection, $this->repository->getConnectionsWithSource($nodeSource));
     }
 
+    /**
+     * @group orm
+     */
     public function testGetConnectionsWithSourceNotContains()
     {
         $nodeSource = new Node(42);
@@ -118,6 +136,9 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         $this->assertEquals(array(), $this->repository->getConnectionsWithSource($nodeSource));
     }
 
+    /**
+     * @group orm
+     */
     public function testGetConnectionsWithDestination()
     {
         $nodeSource = new Node(42);
@@ -134,6 +155,9 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         $this->assertContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination));
     }
 
+    /**
+     * @group orm
+     */
     public function testGetConnectionsWithDestinationNotContains()
     {
         $nodeSource = new Node(42);
@@ -144,5 +168,74 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         $this->getEntityManager()->flush();
 
         $this->assertEquals(array(), $this->repository->getConnectionsWithDestination($nodeDestination));
+    }
+
+    /**
+     * @group orm
+     */
+    public function testAreConnected()
+    {
+        $node1 = new Node(455);
+        $node2 = new Node(4412);
+        $node3 = new Node(4244);
+
+        $this->getEntityManager()->persist($node1);
+        $this->getEntityManager()->persist($node2);
+        $this->getEntityManager()->persist($node3);
+        $this->getEntityManager()->flush();
+
+        $connection1 = $this->createConnection($node1, $node2);
+        $connection2 = $this->createConnection($node2, $node1);
+        $connection3 = $this->createConnection($node1, $node3);
+
+        $this->repository->update($connection1);
+        $this->repository->update($connection2);
+        $this->repository->update($connection3);
+
+        $this->assertCount(1, $this->repository->areConnected($node1, $node2, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(1, $this->repository->areConnected($node2, $node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(1, $this->repository->areConnected($node1, $node3, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(0, $this->repository->areConnected($node2, $node3, array('type' => self::CONNECTION_TYPE)));
+
+        $this->assertContains($connection1, $this->repository->areConnected($node1, $node2, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection2, $this->repository->areConnected($node2, $node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection3, $this->repository->areConnected($node1, $node3, array('type' => self::CONNECTION_TYPE)));
+
+        $this->assertNotContains($connection3, $this->repository->areConnected($node3, $node1, array('type' => self::CONNECTION_TYPE)));
+    }
+
+    /**
+     * @group orm
+     */
+    public function testGetConnections()
+    {
+        $node1 = new Node(455);
+        $node2 = new Node(4412);
+        $node3 = new Node(4244);
+
+        $this->getEntityManager()->persist($node1);
+        $this->getEntityManager()->persist($node2);
+        $this->getEntityManager()->persist($node3);
+        $this->getEntityManager()->flush();
+
+        $connection1 = $this->createConnection($node1, $node2);
+        $connection2 = $this->createConnection($node2, $node1);
+        $connection3 = $this->createConnection($node1, $node3);
+
+        $this->repository->update($connection1);
+        $this->repository->update($connection2);
+        $this->repository->update($connection3);
+
+        $this->assertCount(3, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(2, $this->repository->getConnections($node2, array('type' => self::CONNECTION_TYPE)));
+        $this->assertCount(1, $this->repository->getConnections($node3, array('type' => self::CONNECTION_TYPE)));
+
+        $this->assertContains($connection1, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection2, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection3, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertContains($connection3, $this->repository->getConnections($node3, array('type' => self::CONNECTION_TYPE)));
+
+        $this->assertNotContains($connection3, $this->repository->getConnections($node2, array('type' => self::CONNECTION_TYPE)));
+        $this->assertNotContains($connection2, $this->repository->getConnections($node3, array('type' => self::CONNECTION_TYPE)));
     }
 }

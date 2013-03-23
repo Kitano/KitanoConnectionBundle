@@ -48,7 +48,7 @@ class ConnectionManager implements ConnectionManagerInterface
         $this->getConnectionRepository()->update($connection);
 
         if ($this->dispatcher) {
-            $this->dispatcher->dispatch(ConnectionEvent::CONNECTED, new ConnectionEvent(($connection)));
+            $this->dispatcher->dispatch(ConnectionEvent::CONNECTED, new ConnectionEvent($connection));
         }
 
         return $connection;
@@ -62,7 +62,7 @@ class ConnectionManager implements ConnectionManagerInterface
     public function disconnect(ConnectionInterface $connection)
     {
         if ($this->dispatcher) {
-            $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent(($connection)));
+            $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent($connection));
         }
 
         $this->getConnectionRepository()->destroy($connection);
@@ -75,19 +75,11 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
-        $connectionsTo = $this->getConnectionsTo($destination, $filters);
-        $connectionsFrom = $this->getConnectionsFrom($source, $filters);
+        $this->filterValidator->validateFilters($filters);
 
-        $areConnected = false;
+        $connections =  $this->getConnectionRepository()->areConnected($source, $destination, $filters);
 
-        foreach ($connectionsFrom as $connectionFrom) {
-            if (in_array($connectionFrom, $connectionsTo, true)) {
-                $areConnected = true;
-                break;
-            }
-        }
-
-        return $areConnected;
+        return (count($connections) > 0) ? true : false;
     }
     
     /**
@@ -146,14 +138,7 @@ class ConnectionManager implements ConnectionManagerInterface
     {
         $this->filterValidator->validateFilters($filters);
 
-        $connectionsFrom = $this->getConnectionsFrom($node, $filters);
-        $connectionsTo = $this->getConnectionsTo($node, $filters);
-
-        if (null === $connectionsFrom && null === $connectionsTo) {
-            return null;
-        } else {
-            return new ArrayCollection(array_merge((array) $connectionsFrom, (array) $connectionsTo));
-        }
+        return $this->getConnectionRepository()->getConnections($node, $filters);
     }
 
     /**
