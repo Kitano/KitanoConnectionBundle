@@ -108,7 +108,6 @@ Events are availble if you want to hook the system.
 namespace Acme\DemoBundle\Event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 use Kitano\ConnectionBundle\Event\ConnectionEvent;
 
@@ -117,8 +116,8 @@ class ConnectionSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            'kitano.connection.event.connected"' => array('onConnected', 0),
-            'kitano.connection.event.disconnected"' => array('onDisconnected', 0),
+            ConnectionEvent::CONNECTED => array('onConnected', 0),
+            ConnectionEvent::DISCONNECTED => array('onDisconnected', 0),
         );
     }
 
@@ -148,7 +147,7 @@ class ConnectionSubscriber implements EventSubscriberInterface
     <services>
         <!-- listener -->
         <service id="acme.demo.connection_subscriber" class="%acme.demo.connection_subscriber.class%" public="false">
-            <tag name="doctrine.event_subscriber" />
+            <tag name="kernel.event_subscriber" />
         </service>
     </services>
 </container>
@@ -157,7 +156,7 @@ class ConnectionSubscriber implements EventSubscriberInterface
 Limitations
 -----------
 
-* This bundle can deal with only one peristance layer. It means that you can't Connect a Document object with an Entity object.
+* This bundle can deal with only one persistance layer. It means that you can't Connect a Document object with an Entity object.
 
 License
 -------
