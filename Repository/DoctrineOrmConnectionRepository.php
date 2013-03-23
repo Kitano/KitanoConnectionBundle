@@ -140,15 +140,15 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node1
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node2
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
      * @param array $filters
      * @return array
      */
-    public function areConnected(NodeInterface $node1, NodeInterface $node2, array $filters = array())
+    public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
-        $node1Informations = $this->extractMetadata($node1);
-        $node2Informations = $this->extractMetadata($node2);
+        $node1Informations = $this->extractMetadata($source);
+        $node2Informations = $this->extractMetadata($destination);
 
         $dqlQuery = 'SELECT c
           FROM Kitano\ConnectionBundle\Entity\Connection c
