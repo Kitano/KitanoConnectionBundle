@@ -2,6 +2,7 @@
 
 namespace Kitano\ConnectionBundle\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
@@ -127,9 +128,12 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
      *
      * @return ConnectionRepositoryInterface
      */
-    public function destroy(ConnectionInterface $connection)
+    public function destroy(ArrayCollection $connections)
     {
-        $this->getDocumentManager()->remove($connection);
+        foreach($connections as $connection) {
+            $this->getDocumentManager()->remove($connection);
+        }
+
         $this->getDocumentManager()->flush();
 
         return $this;

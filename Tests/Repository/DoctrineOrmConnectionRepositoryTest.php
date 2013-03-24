@@ -2,6 +2,8 @@
 
 namespace Kitano\ConnectionBundle\Tests\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Tests\OrmTestCase;
 use Kitano\ConnectionBundle\Repository\DoctrineOrmConnectionRepository;
@@ -97,7 +99,7 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
 
         $id = $connection->getId();
 
-        $this->assertEquals($this->repository, $this->repository->destroy($connection));
+        $this->assertEquals($this->repository, $this->repository->destroy(new ArrayCollection(array($connection))));
         $this->assertNull($this->getEntityManager()->find(self::CONNECTION_CLASS, $id));
     }
 

@@ -2,6 +2,8 @@
 
 namespace Kitano\ConnectionBundle\Tests\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Kitano\ConnectionBundle\Repository\DoctrineMongoDBConnectionRepository;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 use Kitano\ConnectionBundle\Tests\MongoDBTestCase;
@@ -88,7 +90,7 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase implements
 
         $id = $connection->getId();
 
-        $this->assertEquals($this->repository, $this->repository->destroy($connection));
+        $this->assertEquals($this->repository, $this->repository->destroy(new ArrayCollection(array($connection))));
         $this->assertNull($this->getDocumentManager()->find(self::CONNECTION_CLASS, $id));
     }
 

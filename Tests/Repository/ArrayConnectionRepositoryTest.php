@@ -2,6 +2,8 @@
 
 namespace Kitano\ConnectionBundle\Tests\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Repository\ArrayConnectionRepository;
 use Kitano\ConnectionBundle\Model\NodeInterface;
@@ -85,7 +87,7 @@ class ArrayConnectionRepositoryTest extends \PHPUnit_Framework_TestCase implemen
         $connection = $this->createConnection($nodeSource, $nodeDestination);
 
         $this->assertEquals($connection, $this->repository->update($connection));
-        $this->assertEquals($this->repository, $this->repository->destroy($connection));
+        $this->assertEquals($this->repository, $this->repository->destroy(new ArrayCollection(array($connection))));
 
         $this->assertNotContains($connection, $this->repository->getConnectionsWithSource($nodeSource, $this->getFilters()));
         $this->assertNotContains($connection, $this->repository->getConnectionsWithDestination($nodeDestination, $this->getFilters()));

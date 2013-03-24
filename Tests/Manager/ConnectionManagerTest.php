@@ -44,12 +44,18 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         unset($this->connectionManager);
     }
 
+    /**
+     * @group manager
+     */
     public function testRemoveCreateAndDestroyMethods()
     {
         $this->assertFalse(method_exists($this->connectionManager, "create"));
-        $this->assertFalse(method_exists($this->connectionManager, "destroy"));
+        $this->assertTrue(method_exists($this->connectionManager, "destroy"));
     }
 
+    /**
+     * @group manager
+     */
     public function testConnect()
     {
         $nodeSource = new Node();
@@ -63,6 +69,9 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("follow", $connection->getType());
     }
 
+    /**
+     * @group manager
+     */
     public function testGetConnectionsFrom()
     {
         $nodeSource = new Node();
@@ -76,6 +85,9 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertContains($connection, $connections);
     }
 
+    /**
+     * @group manager
+     */
     public function testGetConnectionsTo()
     {
         $nodeSource = new Node();
@@ -89,6 +101,9 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertContains($connection, $connections);
     }
 
+    /**
+     * @group manager
+     */
     public function testGetConnections()
     {
         $nodeSource = new Node();
@@ -106,6 +121,9 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertContains($connection, $connectionsOnB->getIterator());
     }
 
+    /**
+     * @group manager
+     */
     public function testAreConnectedSuccess()
     {
         $nodeA = new Node();
@@ -122,7 +140,10 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->connectionManager->areConnected($nodeA, $nodeC, array('type' => 'follow')));
         $this->assertFalse($this->connectionManager->areConnected($nodeC, $nodeA, array('type' => 'like')));
     }
-    
+
+    /**
+     * @group manager
+     */
     public function testIsConnectedToSuccess()
     {
         $this->assertTrue(method_exists($this->connectionManager, 'isConnectedTo'));
@@ -139,5 +160,64 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         
         $this->assertFalse($this->connectionManager->isConnectedTo($nodeA, $nodeB, array('type' => 'like')));
         $this->assertFalse($this->connectionManager->isConnectedTo($nodeB, $nodeA, array('type' => 'like')));
+    }
+
+    /**
+     * @group manager
+     */
+    public function testDisconnectOneConnection()
+    {
+        $nodeA = new Node();
+        $nodeB = new Node();
+
+        $this->connectionManager->connect($nodeA, $nodeB, "follow");
+        $this->connectionManager->disconnect($nodeA, $nodeB, array('type' => 'follow'));
+
+        $this->assertFalse($this->connectionManager->isConnectedTo($nodeA, $nodeB, array('type' => 'follow')));
+    }
+
+    /**
+     * @group manager
+     */
+    public function testDisconnectMultipleConnections()
+    {
+        $nodeA = new Node();
+        $nodeB = new Node();
+        $nodeC = new Node();
+
+        $this->connectionManager->connect($nodeA, $nodeB, "like");
+        $this->connectionManager->connect($nodeA, $nodeB, "share");
+        $this->connectionManager->connect($nodeA, $nodeC, "like");
+        $this->connectionManager->disconnect($nodeA, $nodeB);
+
+        $this->assertFalse($this->connectionManager->isConnectedTo($nodeA, $nodeB));
+        $this->assertTrue($this->connectionManager->isConnectedTo($nodeA, $nodeC));
+    }
+
+    /**
+     * @group manager
+     * @expectedException \Kitano\ConnectionBundle\Exception\NotConnectedException
+     */
+    public function testDisconnectThrowException()
+    {
+        $nodeA = new Node();
+        $nodeB = new Node();
+
+        $this->connectionManager->disconnect($nodeA, $nodeB);
+    }
+
+    /**
+     * @group manager
+     */
+    public function testDestroy()
+    {
+        $nodeA = new Node();
+        $nodeB = new Node();
+
+        $connection = $this->connectionManager->connect($nodeA, $nodeB, "like");
+
+        $this->connectionManager->destroy($connection);
+
+        $this->assertFalse($this->connectionManager->isConnectedTo($nodeA, $nodeB));
     }
 }

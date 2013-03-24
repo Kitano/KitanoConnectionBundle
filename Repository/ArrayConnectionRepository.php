@@ -36,10 +36,14 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
         $connections = array();
 
         foreach ($this->connections as $connection) {
-            if ($node === $connection->getSource()) {
-                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
-                    $connections[] = $connection;
+            if(array_key_exists('type', $filters)) {
+                if($connection->getType() != $filters['type']) {
+                    continue;
                 }
+            }
+
+            if ($node === $connection->getSource()) {
+                $connections[] = $connection;
             }
         }
 
@@ -57,10 +61,14 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
         $connections = array();
 
         foreach ($this->connections as $connection) {
-            if ($node === $connection->getDestination()) {
-                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
-                    $connections[] = $connection;
+            if(array_key_exists('type', $filters)) {
+                if($connection->getType() != $filters['type']) {
+                    continue;
                 }
+            }
+
+            if ($node === $connection->getDestination()) {
+                $connections[] = $connection;
             }
         }
 
@@ -77,16 +85,18 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
         $connections = new ArrayCollection();
 
         foreach ($this->connections as $connection) {
-            if ($node === $connection->getDestination()) {
-                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
-                    $connections[] = $connection;
+            if(array_key_exists('type', $filters)) {
+                if($connection->getType() != $filters['type']) {
+                    continue;
                 }
             }
 
+            if ($node === $connection->getDestination()) {
+                $connections[] = $connection;
+            }
+
             if ($node === $connection->getSource()) {
-                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
-                    $connections[] = $connection;
-                }
+                $connections[] = $connection;
             }
         }
 
@@ -104,10 +114,13 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
         $connections = new ArrayCollection();
 
         foreach ($this->connections as $connection) {
-            if ($source === $connection->getSource() && $destination === $connection->getDestination()) {
-                if (array_key_exists('type', $filters) && $connection->getType() === $filters['type']) {
-                    $connections[] = $connection;
+            if(array_key_exists('type', $filters)) {
+                if($connection->getType() != $filters['type']) {
+                    continue;
                 }
+            }
+            if ($source === $connection->getSource() && $destination === $connection->getDestination()) {
+                $connections[] = $connection;
             }
         }
 
@@ -133,9 +146,9 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
      *
      * @return ConnectionRepositoryInterface
      */
-    public function destroy(ConnectionInterface $connection)
+    public function destroy(ArrayCollection $connections)
     {
-        if ($this->connections->contains($connection)) {
+        foreach($connections as $connection) {
             $this->connections->removeElement($connection);
         }
 

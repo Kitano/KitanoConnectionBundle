@@ -11,6 +11,7 @@ use Kitano\ConnectionBundle\Event\ConnectionEvent;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 use Kitano\ConnectionBundle\Manager\FilterValidator;
 use Kitano\ConnectionBundle\Exception\AlreadyConnectedException;
+use Kitano\ConnectionBundle\Exception\NotConnectedException;
 
 class ConnectionManager implements ConnectionManagerInterface
 {
@@ -59,15 +60,34 @@ class ConnectionManager implements ConnectionManagerInterface
      *
      * @return ConnectionManagerInterface
      */
-    public function disconnect(ConnectionInterface $connection)
+    public function disconnect(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
-        if ($this->dispatcher) {
-            $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent($connection));
+        $this->filterValidator->validateFilters($filters);
+
+        $connections = $this->getConnectionRepository()->getConnections($source, $filters);
+
+        foreach($connections as $i => $connection) {
+            if($connection->getDestination() !== $destination) {
+                unset($connections[$i]);
+            }
         }
 
-        $this->getConnectionRepository()->destroy($connection);
+        if($connections->count() == 0) {
+            throw new NotConnectedException(sprintf('Objects %s (%s) and %s (%s) are not connected', get_class($source), $source->getId(), get_class($destination),$destination->getId()));
+        }
+
+        if ($this->dispatcher) {
+            $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent($connections));
+        }
+
+        $this->getConnectionRepository()->destroy($connections);
 
         return $this;
+    }
+
+    public function destroy(ConnectionInterface $connection)
+    {
+        $this->getConnectionRepository()->destroy(new ArrayCollection(array($connection)));
     }
 
     /**

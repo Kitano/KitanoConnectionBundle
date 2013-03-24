@@ -2,6 +2,7 @@
 
 namespace Kitano\ConnectionBundle\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
 
@@ -195,9 +196,12 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
      *
      * @return ConnectionRepositoryInterface
      */
-    public function destroy(ConnectionInterface $connection)
+    public function destroy(ArrayCollection $connections)
     {
-        $this->_em->remove($connection);
+        foreach($connections as $connection) {
+            $this->_em->remove($connection);
+        }
+
         $this->_em->flush();
 
         return $this;

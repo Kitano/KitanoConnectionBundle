@@ -2,6 +2,7 @@
 
 namespace Kitano\ConnectionBundle\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 
@@ -47,9 +48,9 @@ interface ConnectionRepositoryInterface
     public function update(ConnectionInterface $connection);
 
     /**
-     * @param ConnectionInterface $connection
+     * @param array $connections
      */
-    public function destroy(ConnectionInterface $connection);
+    public function destroy(ArrayCollection $connections);
 
     /**
      * @return ConnectionInterface

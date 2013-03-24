@@ -21,7 +21,7 @@ interface ConnectionManagerInterface
      *
      * @return ConnectionManagerInterface
      */
-    public function disconnect(ConnectionInterface $connection);
+    public function disconnect(NodeInterface $source, NodeInterface $destination, array $filters = array());
 
     /**
      * Check if source node is connect to destination node or vice-versa.
