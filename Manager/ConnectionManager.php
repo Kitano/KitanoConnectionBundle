@@ -77,9 +77,7 @@ class ConnectionManager implements ConnectionManagerInterface
     {
         $this->filterValidator->validateFilters($filters);
 
-        $connections =  $this->getConnectionRepository()->areConnected($source, $destination, $filters);
-
-        return (count($connections) > 0) ? true : false;
+        return $this->getConnectionRepository()->areConnected($source, $destination, $filters);
     }
     
     /**

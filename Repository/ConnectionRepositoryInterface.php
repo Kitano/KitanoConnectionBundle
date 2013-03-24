@@ -35,7 +35,7 @@ interface ConnectionRepositoryInterface
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
      * @param array $filters
-     * @return array
+     * @return bool
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array());
 

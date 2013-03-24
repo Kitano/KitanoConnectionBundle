@@ -93,7 +93,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
      * @param array $filters
-     * @return array
+     * @return bool
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
@@ -106,7 +106,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
             $qb->field('type')->equals($filters['type']);
         }
 
-        return $qb->getQuery()->execute()->toArray();
+        return ($qb->getQuery()->execute()->count() > 0) ? true : false;
     }
 
     /**

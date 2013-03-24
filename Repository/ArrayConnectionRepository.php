@@ -97,7 +97,7 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
      * @param array $filters
-     * @return array|void
+     * @return bool
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
@@ -111,7 +111,7 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
             }
         }
 
-        return $connections;
+        return ($connections->count() > 0) ? true : false;
     }
 
     /**

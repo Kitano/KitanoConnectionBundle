@@ -106,31 +106,26 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     {
         $nodeInformations = $this->extractMetadata($node);
 
-        $dqlQuery = 'SELECT c
-          FROM Kitano\ConnectionBundle\Entity\Connection c
-          WHERE (
-              ((c.sourceObjectId = :nodeId AND c.sourceObjectClass = :nodeClass))
-            OR
-              ((c.destinationObjectId = :nodeId AND c.destinationObjectClass = :nodeClass))
-          )
-        ';
+        $qb = $this->createQueryBuilder('c');
 
-        if (array_key_exists('type', $filters)) {
-            $dqlQuery.= ' AND c.type = :type';
-        }
-
-        $query = $this->_em->createQuery($dqlQuery);
-
-        $query->setParameters(array(
+        $qb->select('c')
+            ->where(
+                $qb->expr()->orX(
+                    $qb->expr()->andX("c.sourceObjectId = :nodeId", "c.sourceObjectClass = :nodeClass"),
+                    $qb->expr()->andX("c.destinationObjectId = :nodeId", "c.destinationObjectClass = :nodeClass")
+                )
+            )
+        ->setParameters(array(
             'nodeClass' => $nodeInformations['object_class'],
             'nodeId' => $nodeInformations['object_id'],
         ));
 
         if (array_key_exists('type', $filters)) {
-            $query->setParameter("type", $filters['type']);
+            $qb->andWhere("c.type = :type");
+            $qb->setParameter("type", $filters['type']);
         }
 
-        $connections = $query->getResult();
+        $connections = $qb->getQuery()->getResult();
 
         foreach ($connections as $connection) {
             $this->fillConnection($connection);
@@ -143,27 +138,23 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
      * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
      * @param array $filters
-     * @return array
+     * @return bool
      */
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
         $node1Informations = $this->extractMetadata($source);
         $node2Informations = $this->extractMetadata($destination);
 
-        $dqlQuery = 'SELECT c
-          FROM Kitano\ConnectionBundle\Entity\Connection c
-          WHERE (
-              ((c.sourceObjectId = :node1Id AND c.sourceObjectClass = :node1Class) AND (c.destinationObjectId = :node2Id AND c.destinationObjectClass = :node2Class))
-          )
-        ';
+        $qb = $this->createQueryBuilder('c');
 
-        if (array_key_exists('type', $filters)) {
-            $dqlQuery.= ' AND c.type = :type';
-        }
-
-        $query = $this->_em->createQuery($dqlQuery);
-
-        $query->setParameters(array(
+        $qb->select('COUNT (c)')
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->andX("c.sourceObjectId = :node1Id", "c.sourceObjectClass = :node1Class"),
+                    $qb->expr()->andX("c.destinationObjectId = :node2Id", "c.destinationObjectClass = :node2Class")
+                )
+            )
+        ->setParameters(array(
             'node1Class' => $node1Informations['object_class'],
             'node2Class' => $node2Informations['object_class'],
             'node1Id' => $node1Informations['object_id'],
@@ -171,16 +162,11 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
         ));
 
         if (array_key_exists('type', $filters)) {
-            $query->setParameter("type", $filters['type']);
+            $qb->andWhere("c.type = :type");
+            $qb->setParameter("type", $filters['type']);
         }
 
-        $connections = $query->getResult();
-
-        foreach ($connections as $connection) {
-            $this->fillConnection($connection);
-        }
-
-        return $connections;
+        return ($qb->getQuery()->getSingleScalarResult() > 0) ? true : false;
     }
 
     /**

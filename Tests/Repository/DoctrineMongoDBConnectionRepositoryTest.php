@@ -190,16 +190,10 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase implements
         $this->repository->update($connection2);
         $this->repository->update($connection3);
 
-        $this->assertCount(1, $this->repository->areConnected($node1, $node2, array('type' => self::CONNECTION_TYPE)));
-        $this->assertCount(1, $this->repository->areConnected($node2, $node1, array('type' => self::CONNECTION_TYPE)));
-        $this->assertCount(1, $this->repository->areConnected($node1, $node3, array('type' => self::CONNECTION_TYPE)));
-        $this->assertCount(0, $this->repository->areConnected($node2, $node3, array('type' => self::CONNECTION_TYPE)));
-
-        $this->assertContains($connection1, $this->repository->areConnected($node1, $node2, array('type' => self::CONNECTION_TYPE)));
-        $this->assertContains($connection2, $this->repository->areConnected($node2, $node1, array('type' => self::CONNECTION_TYPE)));
-        $this->assertContains($connection3, $this->repository->areConnected($node1, $node3, array('type' => self::CONNECTION_TYPE)));
-
-        $this->assertNotContains($connection3, $this->repository->areConnected($node3, $node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertTrue($this->repository->areConnected($node1, $node2, array('type' => self::CONNECTION_TYPE)));
+        $this->assertTrue($this->repository->areConnected($node2, $node1, array('type' => self::CONNECTION_TYPE)));
+        $this->assertTrue($this->repository->areConnected($node1, $node3, array('type' => self::CONNECTION_TYPE)));
+        $this->assertFalse($this->repository->areConnected($node2, $node3, array('type' => self::CONNECTION_TYPE)));
     }
 
     /**
