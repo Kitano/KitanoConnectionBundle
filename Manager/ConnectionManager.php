@@ -231,7 +231,7 @@ class ConnectionManager implements ConnectionManagerInterface
             }
         }
 
-        if($connections->count() == 0) {
+        if(count($connections) == 0) {
             throw new NotConnectedException(
                 sprintf('Objects %s (%s) and %s (%s) are not connected',
                     get_class($source),
