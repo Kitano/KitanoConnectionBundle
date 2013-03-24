@@ -41,16 +41,17 @@ interface ConnectionRepositoryInterface
     public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array());
 
     /**
-     * @param ConnectionInterface $connection
+     * @param mixed $connections ArrayCollection|ConnectionInterface
      *
-     * @return \Kitano\ConnectionBundle\Model\Connection
+     * @return mixed ArrayCollection|ConnectionInterface
      */
-    public function update(ConnectionInterface $connection);
+    public function update($connections);
 
     /**
-     * @param array $connections
+     * @param mixed $connections ArrayCollection|ConnectionInterface
+     * @return DoctrineMongoDBConnectionRepository
      */
-    public function destroy(ArrayCollection $connections);
+    public function destroy($connections);
 
     /**
      * @return ConnectionInterface

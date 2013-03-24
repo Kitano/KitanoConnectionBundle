@@ -5,6 +5,7 @@ namespace Kitano\ConnectionBundle\Tests\Manager;
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Manager\ConnectionManager;
 use Kitano\ConnectionBundle\Repository\ArrayConnectionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,6 +16,11 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
      * @var \Kitano\ConnectionBundle\Manager\ConnectionManager
      */
     private $connectionManager;
+
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     */
+    private $nodes;
 
     public function setUp()
     {
@@ -28,6 +34,49 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $mock = $this->getMockBuilder('Kitano\ConnectionBundle\Manager\FilterValidator')
             ->disableOriginalConstructor()
             ->getMock();
+
+        return $mock;
+    }
+
+    protected function generateNodes()
+    {
+        $this->nodes = new ArrayCollection();
+
+        for($i=0; $i<=3; $i++) {
+            $node['source'] = new Node($i);
+            $node['destination'] = new Node($i);
+
+            $this->nodes->add($node);
+        }
+    }
+
+    protected function getConnectionCommandMock($type)
+    {
+        foreach($this->nodes as $i => $node)
+        {
+            switch($type)
+            {
+                case 'connect' :
+                    $node['type'] = 'like';
+                    break;
+
+                case 'disconnect' :
+                    $node['filters'] = array('type' => 'like');
+                    break;
+            }
+
+            $this->nodes[$i] = $node;
+        }
+
+        $mock = $this->getMockBuilder('Kitano\ConnectionBundle\Manager\ConnectionCommand')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mock
+            ->expects($this->any())
+            ->method('getConnections')
+            ->will($this->returnValue($this->nodes))
+        ;
 
         return $mock;
     }
@@ -219,5 +268,41 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $this->connectionManager->destroy($connection);
 
         $this->assertFalse($this->connectionManager->isConnectedTo($nodeA, $nodeB));
+    }
+
+    /**
+     * @group manager
+     */
+    public function testConnectBulk()
+    {
+        $this->generateNodes();
+
+        $connectionCommand = $this->getConnectionCommandMock('connect');
+
+        $this->connectionManager->connectBulk($connectionCommand);
+
+        foreach($connectionCommand->getConnections() as $connection)
+        {
+            $this->assertTrue($this->connectionManager->areConnected($connection['source'], $connection['destination'], array('type' => $connection['type'])));
+        }
+    }
+
+    /**
+     * @group manager
+     */
+    public function testDisconnectBulk()
+    {
+        $this->generateNodes();
+
+        $connectionCommand = $this->getConnectionCommandMock('connect');
+        $this->connectionManager->connectBulk($connectionCommand);
+
+        $connectionCommand = $this->getConnectionCommandMock('disconnect');
+        $this->connectionManager->disconnectBulk($connectionCommand);
+
+        foreach($connectionCommand->getConnections() as $connection)
+        {
+            $this->assertFalse($this->connectionManager->areConnected($connection['source'], $connection['destination'], $connection['filters']));
+        }
     }
 }

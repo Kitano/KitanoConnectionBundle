@@ -37,15 +37,7 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function connect(NodeInterface $source, NodeInterface $destination, $type)
     {
-        if ($this->areConnected($source, $destination, array('type' => $type))) {
-            throw new AlreadyConnectedException(sprintf('Objects %s (%s) and %s (%s) are already connected', get_class($source), $source->getId(), get_class($destination),$destination->getId()));
-        }
-
-        $connection = $this->getConnectionRepository()->createEmptyConnection();
-        $connection->setSource($source);
-        $connection->setDestination($destination);
-        $connection->setType($type);
-
+        $connection = $this->createConnection($source, $destination, $type);
         $this->getConnectionRepository()->update($connection);
 
         if ($this->dispatcher) {
@@ -62,32 +54,66 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function disconnect(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
-        $this->filterValidator->validateFilters($filters);
-
-        $connections = $this->getConnectionRepository()->getConnections($source, $filters);
-
-        foreach($connections as $i => $connection) {
-            if($connection->getDestination() !== $destination) {
-                unset($connections[$i]);
-            }
-        }
-
-        if($connections->count() == 0) {
-            throw new NotConnectedException(sprintf('Objects %s (%s) and %s (%s) are not connected', get_class($source), $source->getId(), get_class($destination),$destination->getId()));
-        }
+        $connections = $this->filterConnectionsForDestroy($source, $destination, $filters);
+        $this->getConnectionRepository()->destroy($connections);
 
         if ($this->dispatcher) {
-            $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent($connections));
+            foreach($connections as $connection) { // hum ?
+                $this->dispatcher->dispatch (ConnectionEvent::DISCONNECTED, new ConnectionEvent($connection));
+            }
         }
-
-        $this->getConnectionRepository()->destroy($connections);
 
         return $this;
     }
 
+    /**
+     * @param ConnectionCommand $command
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function connectBulk(ConnectionCommand $command)
+    {
+        $connections = new ArrayCollection();
+        $connectionsDescription = $command->getConnections();
+
+        foreach($connectionsDescription as $connection) {
+            $connection = $this->createConnection($connection['source'], $connection['destination'], $connection['type']);
+            $connections->add($connection);
+        }
+
+        $this->getConnectionRepository()->update($connections);
+
+        return $connections;
+    }
+
+    /**
+     * @param ConnectionCommand $command
+     * @return ConnectionManager
+     */
+    public function disconnectBulk(ConnectionCommand $command)
+    {
+        $connectionsDescription = $command->getConnections();
+        $toDisconnectCollection = new ArrayCollection();
+
+        foreach($connectionsDescription as $connection) {
+           $matchedConnections = $this->filterConnectionsForDestroy($connection['source'], $connection['destination'], $connection['filters']);
+
+            foreach($matchedConnections as $c) {
+                $toDisconnectCollection->add($c);
+            }
+        }
+        $this->getConnectionRepository()->destroy($toDisconnectCollection);
+
+        return $this;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
+     */
     public function destroy(ConnectionInterface $connection)
     {
-        $this->getConnectionRepository()->destroy(new ArrayCollection(array($connection)));
+        $this->getConnectionRepository()->destroy($connection);
+
+        return $this;
     }
 
     /**
@@ -157,6 +183,66 @@ class ConnectionManager implements ConnectionManagerInterface
         $this->filterValidator->validateFilters($filters);
 
         return $this->getConnectionRepository()->getConnections($node, $filters);
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
+     * @param $type
+     * @return \Kitano\ConnectionBundle\Model\ConnectionInterface
+     * @throws \Kitano\ConnectionBundle\Exception\AlreadyConnectedException
+     */
+    protected function createConnection(NodeInterface $source, NodeInterface $destination, $type)
+    {
+        if ($this->areConnected($source, $destination, array('type' => $type))) {
+            throw new AlreadyConnectedException(
+                sprintf('Objects %s (%s) and %s (%s) are already connected',
+                    get_class($source),
+                    $source->getId(),
+                    get_class($destination),
+                    $destination->getId()
+                )
+            );
+        }
+
+        $connection = $this->getConnectionRepository()->createEmptyConnection();
+        $connection->setSource($source);
+        $connection->setDestination($destination);
+        $connection->setType($type);
+
+        return $connection;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
+     * @param $filters
+     * @return array
+     * @throws \Kitano\ConnectionBundle\Exception\NotConnectedException
+     */
+    protected function filterConnectionsForDestroy(NodeInterface $source, NodeInterface $destination, $filters)
+    {
+        $this->filterValidator->validateFilters($filters);
+        $connections = $this->getConnectionRepository()->getConnections($source, $filters);
+
+        foreach($connections as $i => $connection) {
+            if($connection->getDestination() !== $destination) {
+                unset($connections[$i]);
+            }
+        }
+
+        if($connections->count() == 0) {
+            throw new NotConnectedException(
+                sprintf('Objects %s (%s) and %s (%s) are not connected',
+                    get_class($source),
+                    $source->getId(),
+                    get_class($destination),
+                    $destination->getId()
+                )
+            );
+        }
+
+        return $connections;
     }
 
     /**

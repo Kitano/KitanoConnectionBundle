@@ -171,11 +171,29 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     }
 
     /**
-     * @param ConnectionInterface $connection
+     * @param mixed $connections ArrayCollection|ConnectionInterface
      *
-     * @return ConnectionInterface
+     * @return mixed ArrayCollection|ConnectionInterface
      */
-    public function update(ConnectionInterface $connection)
+    public function update($connections)
+    {
+        if($connections instanceof ArrayCollection) {
+            foreach($connections as $connection) {
+                $this->persistConnection($connection);
+            }
+        } else {
+            $this->persistConnection($connections);
+        }
+
+        $this->_em->flush();
+
+        return $connections;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
+     */
+    protected function persistConnection(ConnectionInterface $connection)
     {
         $sourceInformations = $this->extractMetadata($connection->getSource());
         $destinationInformations = $this->extractMetadata($connection->getDestination());
@@ -186,25 +204,33 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
         $connection->setDestinationObjectClass($destinationInformations["object_class"]);
 
         $this->_em->persist($connection);
-        $this->_em->flush();
-
-        return $connection;
     }
 
     /**
-     * @param ConnectionInterface $connection
-     *
-     * @return ConnectionRepositoryInterface
+     * @param mixed $connections ArrayCollection|ConnectionInterface
+     * @return DoctrineMongoDBConnectionRepository
      */
-    public function destroy(ArrayCollection $connections)
+    public function destroy($connections)
     {
-        foreach($connections as $connection) {
-            $this->_em->remove($connection);
+        if($connections instanceof ArrayCollection) {
+            foreach($connections as $connection) {
+                $this->removeConnection($connection);
+            }
+        } else {
+            $this->removeConnection($connections);
         }
 
         $this->_em->flush();
 
         return $this;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
+     */
+    protected function removeConnection(ConnectionInterface $connection)
+    {
+        $this->_em->remove($connection);
     }
 
     /**

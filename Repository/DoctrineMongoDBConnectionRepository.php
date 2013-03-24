@@ -78,7 +78,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
             $qb->expr()
                 ->field("source")->references($node)
         )
-            ->addOr(
+        ->addOr(
             $qb->expr()
                 ->field("destination")->references($node)
         );
@@ -111,32 +111,58 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
     }
 
     /**
-     * @param ConnectionInterface $connection
+     * @param mixed $connections ArrayCollection|ConnectionInterface
      *
-     * @return ConnectionInterface
+     * @return mixed ArrayCollection|ConnectionInterface
      */
-    public function update(ConnectionInterface $connection)
+    public function update($connections)
     {
-        $this->getDocumentManager()->persist($connection);
+        if($connections instanceof ArrayCollection) {
+            foreach($connections as $connection) {
+                $this->persistConnection($connection);
+            }
+        } else {
+            $this->persistConnection($connections);
+        }
+
         $this->getDocumentManager()->flush();
 
-        return $connection;
+        return $connections;
     }
 
     /**
-     * @param ConnectionInterface $connection
-     *
-     * @return ConnectionRepositoryInterface
+     * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
      */
-    public function destroy(ArrayCollection $connections)
+    protected function persistConnection(ConnectionInterface $connection)
     {
-        foreach($connections as $connection) {
-            $this->getDocumentManager()->remove($connection);
+        $this->getDocumentManager()->persist($connection);
+    }
+
+    /**
+     * @param mixed $connections ArrayCollection|ConnectionInterface
+     * @return DoctrineMongoDBConnectionRepository
+     */
+    public function destroy($connections)
+    {
+        if($connections instanceof ArrayCollection) {
+            foreach($connections as $connection) {
+                $this->removeConnection($connection);
+            }
+        } else {
+            $this->removeConnection($connections);
         }
 
         $this->getDocumentManager()->flush();
 
         return $this;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
+     */
+    protected function removeConnection(ConnectionInterface $connection)
+    {
+        $this->getDocumentManager()->remove($connection);
     }
 
     /**

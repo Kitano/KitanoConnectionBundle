@@ -128,31 +128,56 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
     }
 
     /**
-     * @param ConnectionInterface $connection
+     * @param mixed $connections ArrayCollection|ConnectionInterface
      *
-     * @return ConnectionInterface
+     * @return mixed ArrayCollection|ConnectionInterface
      */
-    public function update(ConnectionInterface $connection)
+    public function update($connections)
+    {
+        if($connections instanceof ArrayCollection) {
+            foreach($connections as $connection) {
+                $this->persistConnection($connection);
+            }
+        } else {
+            $this->persistConnection($connections);
+        }
+
+        return $connections;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
+     */
+    protected function persistConnection(ConnectionInterface $connection)
     {
         if (!$this->connections->contains($connection)) {
             $this->connections->add($connection);
         }
-
-        return $connection;
     }
 
     /**
-     * @param ConnectionInterface $connection
-     *
-     * @return ConnectionRepositoryInterface
+     * @param mixed $connections ArrayCollection|ConnectionInterface
+     * @return DoctrineMongoDBConnectionRepository
      */
-    public function destroy(ArrayCollection $connections)
+    public function destroy($connections)
     {
-        foreach($connections as $connection) {
-            $this->connections->removeElement($connection);
+        if($connections instanceof ArrayCollection) {
+            foreach($connections as $connection) {
+                $this->removeConnection($connection);
+            }
+        } else {
+            $this->removeConnection($connections);
         }
 
         return $this;
+    }
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
+     */
+    protected function removeConnection(ConnectionInterface $connection)
+    {
+        $this->connections->removeElement($connection);
     }
 
     /**

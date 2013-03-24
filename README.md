@@ -86,7 +86,7 @@ kitano_connection:
 
 In this case, don't forget to define an entity schema for **Acme\Entity\Connection**
 
-**c) Custom connection with a custom peristance layer**
+**c) Custom connection with a custom persistance layer**
 
 If you want to use a custom repository, use the above configuration.
 

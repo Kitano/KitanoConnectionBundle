@@ -24,6 +24,30 @@ interface ConnectionManagerInterface
     public function disconnect(NodeInterface $source, NodeInterface $destination, array $filters = array());
 
     /**
+     * Create multiple connections
+     *
+     * @see ConnectionCommand
+     * @param ConnectionCommand $command
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function connectBulk(ConnectionCommand $command);
+
+    /**
+     * Delete multiple connections
+     *
+     * @see ConnectionCommand
+     * @param ConnectionCommand $command
+     * @return $this
+     */
+    public function disconnectBulk(ConnectionCommand $command);
+
+    /**
+     * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
+     * @return $this
+     */
+    public function destroy(ConnectionInterface $connection);
+
+    /**
      * Check if source node is connect to destination node or vice-versa.
      * 
      * @param NodeInterface $source

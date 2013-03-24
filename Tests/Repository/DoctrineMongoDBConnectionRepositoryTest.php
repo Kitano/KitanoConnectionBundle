@@ -90,7 +90,7 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase implements
 
         $id = $connection->getId();
 
-        $this->assertEquals($this->repository, $this->repository->destroy(new ArrayCollection(array($connection))));
+        $this->assertEquals($this->repository, $this->repository->destroy($connection));
         $this->assertNull($this->getDocumentManager()->find(self::CONNECTION_CLASS, $id));
     }
 
