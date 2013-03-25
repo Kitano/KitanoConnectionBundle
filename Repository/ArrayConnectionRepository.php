@@ -104,12 +104,9 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
-     * @param array $filters
-     * @return bool
+     * {@inheritDoc}
      */
-    public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
+    public function areConnected(NodeInterface $nodeA, NodeInterface $nodeB, array $filters = array())
     {
         $connections = new ArrayCollection();
 
@@ -119,7 +116,7 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
                     continue;
                 }
             }
-            if ($source === $connection->getSource() && $destination === $connection->getDestination()) {
+            if ($nodeA === $connection->getSource() && $nodeB === $connection->getDestination()) {
                 $connections[] = $connection;
             }
         }

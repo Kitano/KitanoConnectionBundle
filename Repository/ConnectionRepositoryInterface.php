@@ -33,12 +33,12 @@ interface ConnectionRepositoryInterface
     public function getConnections(NodeInterface $node, array $filters = array());
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $nodeA
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $nodeB
      * @param array $filters
      * @return bool
      */
-    public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array());
+    public function areConnected(NodeInterface $nodeA, NodeInterface $nodeB, array $filters = array());
 
     /**
      * @param mixed $connections ArrayCollection|ConnectionInterface

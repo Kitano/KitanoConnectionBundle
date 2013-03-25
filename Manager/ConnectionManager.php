@@ -119,11 +119,11 @@ class ConnectionManager implements ConnectionManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
+    public function areConnected(NodeInterface $nodeA, NodeInterface $nodeB, array $filters = array())
     {
         $this->filterValidator->validateFilters($filters);
 
-        return $this->getConnectionRepository()->areConnected($source, $destination, $filters);
+        return $this->getConnectionRepository()->areConnected($nodeA, $nodeB, $filters);
     }
     
     /**

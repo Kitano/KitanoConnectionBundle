@@ -50,13 +50,13 @@ interface ConnectionManagerInterface
     /**
      * Check if source node is connect to destination node or vice-versa.
      * 
-     * @param NodeInterface $source
-     * @param NodeInterface $destination
+     * @param NodeInterface $nodeA
+     * @param NodeInterface $nodeB
      * @param array         $filters
      *
      * @return boolean
      */
-    public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array());
+    public function areConnected(NodeInterface $nodeA, NodeInterface $nodeB, array $filters = array());
 
     /**
      * Check if source node is connect to destination node.

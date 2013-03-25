@@ -91,16 +91,13 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
-     * @param array $filters
-     * @return bool
+     * {@inheritDoc}
      */
-    public function areConnected(NodeInterface $source, NodeInterface $destination, array $filters = array())
+    public function areConnected(NodeInterface $nodeA, NodeInterface $nodeB, array $filters = array())
     {
         $qb = $this->createQueryBuilder('Connection')
-            ->field("source")->references($source)
-            ->field("destination")->references($destination)
+            ->field("source")->references($nodeA)
+            ->field("destination")->references($nodeB)
         ;
 
         if (array_key_exists('type', $filters)) {
