@@ -5,7 +5,6 @@ namespace Kitano\ConnectionBundle\Tests\Manager;
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Manager\ConnectionManager;
 use Kitano\ConnectionBundle\Repository\ArrayConnectionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +17,7 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
     private $connectionManager;
 
     /**
-     * @var \Doctrine\Common\Collections\ArrayCollection
+     * @var array
      */
     private $nodes;
 
@@ -40,13 +39,13 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function generateNodes()
     {
-        $this->nodes = new ArrayCollection();
+        $this->nodes = array();
 
         for($i=0; $i<=3; $i++) {
             $node['source'] = new Node($i);
             $node['destination'] = new Node($i);
 
-            $this->nodes->add($node);
+            $this->nodes[] = $node;
         }
     }
 
@@ -164,10 +163,10 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $connectionsOnB = $this->connectionManager->getConnections($nodeDestination, $this->getFilters());
 
         $this->assertNotNull($connectionsOnA);
-        $this->assertContains($connection, $connectionsOnA->getIterator());
+        $this->assertContains($connection, $connectionsOnA);
 
         $this->assertNotNull($connectionsOnB);
-        $this->assertContains($connection, $connectionsOnB->getIterator());
+        $this->assertContains($connection, $connectionsOnB);
     }
 
     /**
@@ -179,8 +178,8 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $nodeB = new Node();
         $nodeC = new Node();
 
-        $this->connectionManager->connect($nodeA, $nodeB, "follow");
-        $this->connectionManager->connect($nodeA, $nodeC, "like");
+        $this->connectionManager->connect($nodeA, $nodeB, 'follow');
+        $this->connectionManager->connect($nodeA, $nodeC, 'like');
 
         $this->assertTrue($this->connectionManager->areConnected($nodeA, $nodeB, array('type' => 'follow')));
         $this->assertTrue($this->connectionManager->areConnected($nodeB, $nodeA, array('type' => 'follow')));
@@ -200,8 +199,8 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $nodeB = new Node();
         $nodeC = new Node();
 
-        $this->connectionManager->connect($nodeA, $nodeB, "follow");
-        $this->connectionManager->connect($nodeA, $nodeC, "like");
+        $this->connectionManager->connect($nodeA, $nodeB, 'follow');
+        $this->connectionManager->connect($nodeA, $nodeC, 'like');
 
         $this->assertTrue($this->connectionManager->isConnectedTo($nodeA, $nodeB, array('type' => 'follow')));
         $this->assertFalse($this->connectionManager->isConnectedTo($nodeB, $nodeA, array('type' => 'follow')));

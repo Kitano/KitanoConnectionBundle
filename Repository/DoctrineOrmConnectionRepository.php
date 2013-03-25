@@ -2,7 +2,6 @@
 
 namespace Kitano\ConnectionBundle\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
 
@@ -33,10 +32,7 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     }
 
     /**
-     * @param NodeInterface $node
-     * @param array         $filters
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getConnectionsWithSource(NodeInterface $node, array $filters = array())
     {
@@ -66,10 +62,7 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array                                        $filters
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getConnectionsWithDestination(NodeInterface $node, array $filters = array())
     {
@@ -99,9 +92,7 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array $filters
-     * @return array
+     * @{@inheritDoc}
      */
     public function getConnections(NodeInterface $node, array $filters = array())
     {
@@ -140,41 +131,46 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
      */
     public function areConnected(NodeInterface $nodeA, NodeInterface $nodeB, array $filters = array())
     {
-        $node1Informations = $this->extractMetadata($nodeA);
-        $node2Informations = $this->extractMetadata($nodeB);
+        $nodeAInformations = $this->extractMetadata($nodeA);
+        $nodeBInformations = $this->extractMetadata($nodeB);
 
-        $qb = $this->createQueryBuilder('c');
+        $queryBuilder = $this->createQueryBuilder('connection');
 
-        $qb->select('COUNT (c)')
+        $queryBuilder->select('COUNT (connection)')
             ->where(
-                $qb->expr()->andX(
-                    $qb->expr()->andX("c.sourceObjectId = :node1Id", "c.sourceObjectClass = :node1Class"),
-                    $qb->expr()->andX("c.destinationObjectId = :node2Id", "c.destinationObjectClass = :node2Class")
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->andX("connection.sourceObjectId = :nodeAId", "connection.sourceObjectClass = :nodeAClass"),
+                        $queryBuilder->expr()->andX("connection.destinationObjectId = :nodeBId", "connection.destinationObjectClass = :nodeBClass")
+                    ),
+                    $queryBuilder->expr()->andX(
+                        $queryBuilder->expr()->andX("connection.sourceObjectId = :nodeBId", "connection.sourceObjectClass = :nodeBClass"),
+                        $queryBuilder->expr()->andX("connection.destinationObjectId = :nodeAId", "connection.destinationObjectClass = :nodeAClass")
+                    )
                 )
-            )
-        ->setParameters(array(
-            'node1Class' => $node1Informations['object_class'],
-            'node2Class' => $node2Informations['object_class'],
-            'node1Id' => $node1Informations['object_id'],
-            'node2Id' => $node2Informations['object_id'],
+            );
+        
+        $queryBuilder->setParameters(array(
+            'nodeAClass' => $nodeAInformations['object_class'],
+            'nodeBClass' => $nodeBInformations['object_class'],
+            'nodeAId' => $nodeAInformations['object_id'],
+            'nodeBId' => $nodeBInformations['object_id'],
         ));
 
         if (array_key_exists('type', $filters)) {
-            $qb->andWhere("c.type = :type");
-            $qb->setParameter("type", $filters['type']);
+            $queryBuilder->andWhere("connection.type = :type");
+            $queryBuilder->setParameter("type", $filters['type']);
         }
 
-        return ($qb->getQuery()->getSingleScalarResult() > 0) ? true : false;
+        return ($queryBuilder->getQuery()->getSingleScalarResult() > 0);
     }
 
     /**
-     * @param mixed $connections ArrayCollection|ConnectionInterface
-     *
-     * @return mixed ArrayCollection|ConnectionInterface
+     * {@inheritDoc}
      */
     public function update($connections)
     {
-        if($connections instanceof ArrayCollection) {
+        if(is_array($connections)) {
             foreach($connections as $connection) {
                 $this->persistConnection($connection);
             }
@@ -204,12 +200,11 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     }
 
     /**
-     * @param mixed $connections ArrayCollection|ConnectionInterface
-     * @return DoctrineMongoDBConnectionRepository
+     * {@inheritDoc}
      */
     public function destroy($connections)
     {
-        if($connections instanceof ArrayCollection) {
+        if(is_array($connections)) {
             foreach($connections as $connection) {
                 $this->removeConnection($connection);
             }
@@ -231,7 +226,7 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     }
 
     /**
-     * @return ConnectionInterface
+     * {@inheritDoc}
      */
     public function createEmptyConnection()
     {

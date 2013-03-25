@@ -2,7 +2,6 @@
 
 namespace Kitano\ConnectionBundle\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 
@@ -41,14 +40,14 @@ interface ConnectionRepositoryInterface
     public function areConnected(NodeInterface $nodeA, NodeInterface $nodeB, array $filters = array());
 
     /**
-     * @param mixed $connections ArrayCollection|ConnectionInterface
+     * @param mixed $connections array|ConnectionInterface
      *
-     * @return mixed ArrayCollection|ConnectionInterface
+     * @return mixed array|ConnectionInterface
      */
     public function update($connections);
 
     /**
-     * @param mixed $connections ArrayCollection|ConnectionInterface
+     * @param mixed $connections array|ConnectionInterface
      * @return DoctrineMongoDBConnectionRepository
      */
     public function destroy($connections);

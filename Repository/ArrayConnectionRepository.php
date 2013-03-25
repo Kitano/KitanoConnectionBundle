@@ -26,10 +26,7 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
     }
 
     /**
-     * @param NodeInterface $node
-     * @param array         $filters
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getConnectionsWithSource(NodeInterface $node, array $filters = array())
     {
@@ -51,10 +48,7 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array                                        $filters
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getConnectionsWithDestination(NodeInterface $node, array $filters = array())
     {
@@ -76,13 +70,11 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array $filters
-     * @return array|void
+     * {@inheritDoc}
      */
     public function getConnections(NodeInterface $node, array $filters = array())
     {
-        $connections = new ArrayCollection();
+        $connections = array();
 
         foreach ($this->connections as $connection) {
             if(array_key_exists('type', $filters)) {
@@ -108,29 +100,29 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
      */
     public function areConnected(NodeInterface $nodeA, NodeInterface $nodeB, array $filters = array())
     {
-        $connections = new ArrayCollection();
-
         foreach ($this->connections as $connection) {
             if(array_key_exists('type', $filters) && $connection->getType() !== $filters['type']) {
                 continue;
             }
             
             if ($nodeA === $connection->getSource() && $nodeB === $connection->getDestination()) {
-                $connections[] = $connection;
+                return true;
+            }
+            
+            if ($nodeB === $connection->getSource() && $nodeA === $connection->getDestination()) {
+                return true;
             }
         }
-
-        return ($connections->count() > 0) ? true : false;
+        
+        return false;
     }
 
     /**
-     * @param mixed $connections ArrayCollection|ConnectionInterface
-     *
-     * @return mixed ArrayCollection|ConnectionInterface
+     * {@inheritDoc}
      */
     public function update($connections)
     {
-        if($connections instanceof ArrayCollection) {
+        if(is_array($connections)) {
             foreach($connections as $connection) {
                 $this->persistConnection($connection);
             }
@@ -152,12 +144,11 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
     }
 
     /**
-     * @param mixed $connections ArrayCollection|ConnectionInterface
-     * @return DoctrineMongoDBConnectionRepository
+     * {@inheritDoc}
      */
     public function destroy($connections)
     {
-        if($connections instanceof ArrayCollection) {
+        if(is_array($connections)) {
             foreach($connections as $connection) {
                 $this->removeConnection($connection);
             }
@@ -177,7 +168,7 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
     }
 
     /**
-     * @return ConnectionInterface
+     * {@inheritDoc}
      */
     public function createEmptyConnection()
     {

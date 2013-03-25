@@ -2,8 +2,6 @@
 
 namespace Kitano\ConnectionBundle\Tests\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Kitano\ConnectionBundle\Repository\DoctrineMongoDBConnectionRepository;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 use Kitano\ConnectionBundle\Tests\MongoDBTestCase;
@@ -195,6 +193,7 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase implements
         $this->assertTrue($this->repository->areConnected($node1, $node2, array('type' => self::CONNECTION_TYPE)));
         $this->assertTrue($this->repository->areConnected($node2, $node1, array('type' => self::CONNECTION_TYPE)));
         $this->assertTrue($this->repository->areConnected($node1, $node3, array('type' => self::CONNECTION_TYPE)));
+        $this->assertTrue($this->repository->areConnected($node3, $node1, array('type' => self::CONNECTION_TYPE)));
         $this->assertFalse($this->repository->areConnected($node2, $node3, array('type' => self::CONNECTION_TYPE)));
     }
 
@@ -219,6 +218,8 @@ class DoctrineMongoDBConnectionRepositoryTest extends MongoDBTestCase implements
         $this->repository->update($connection1);
         $this->repository->update($connection2);
         $this->repository->update($connection3);
+        
+        $this->assertTrue(is_array($this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE))));
 
         $this->assertCount(3, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
         $this->assertCount(2, $this->repository->getConnections($node2, array('type' => self::CONNECTION_TYPE)));

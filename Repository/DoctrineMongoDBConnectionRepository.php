@@ -2,7 +2,6 @@
 
 namespace Kitano\ConnectionBundle\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
@@ -28,10 +27,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
     }
 
     /**
-     * @param NodeInterface $node
-     * @param array         $filters
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getConnectionsWithSource(NodeInterface $node, array $filters = array())
     {
@@ -47,10 +43,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array                                        $filters
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getConnectionsWithDestination(NodeInterface $node, array $filters = array())
     {
@@ -66,9 +59,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\NodeInterface $node
-     * @param array $filters
-     * @return array
+     * {@inheritDoc}
      */
     public function getConnections(NodeInterface $node, array $filters = array())
     {
@@ -108,13 +99,11 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
     }
 
     /**
-     * @param mixed $connections ArrayCollection|ConnectionInterface
-     *
-     * @return mixed ArrayCollection|ConnectionInterface
+     * {@inheritDoc}
      */
     public function update($connections)
     {
-        if($connections instanceof ArrayCollection) {
+        if(is_array($connections)) {
             foreach($connections as $connection) {
                 $this->persistConnection($connection);
             }
@@ -136,12 +125,11 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
     }
 
     /**
-     * @param mixed $connections ArrayCollection|ConnectionInterface
-     * @return DoctrineMongoDBConnectionRepository
+     * {@inheritDoc}
      */
     public function destroy($connections)
     {
-        if($connections instanceof ArrayCollection) {
+        if(is_array($connections)) {
             foreach($connections as $connection) {
                 $this->removeConnection($connection);
             }
@@ -163,7 +151,7 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
     }
 
     /**
-     * @return ConnectionInterface
+     * {@inheritDoc}
      */
     public function createEmptyConnection()
     {

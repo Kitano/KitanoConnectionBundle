@@ -2,7 +2,6 @@
 
 namespace Kitano\ConnectionBundle\Manager;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -32,7 +31,7 @@ class ConnectionManager implements ConnectionManagerInterface
 
     /**
      * {@inheritDoc}
-     *
+     * 
      * @throws AlreadyConnectedException When connection from source to destination already exists
      */
     public function connect(NodeInterface $source, NodeInterface $destination, $type)
@@ -49,8 +48,6 @@ class ConnectionManager implements ConnectionManagerInterface
 
     /**
      * {@inheritDoc}
-     *
-     * @return ConnectionManagerInterface
      */
     public function disconnect(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
@@ -67,17 +64,16 @@ class ConnectionManager implements ConnectionManagerInterface
     }
 
     /**
-     * @param ConnectionCommand $command
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * {@inheritDoc}
      */
     public function connectBulk(ConnectionCommand $command)
     {
-        $connections = new ArrayCollection();
+        $connections = array();
         $connectionsDescription = $command->getConnections();
 
         foreach($connectionsDescription as $connection) {
             $connection = $this->createConnection($connection['source'], $connection['destination'], $connection['type']);
-            $connections->add($connection);
+            $connections[] = $connection;
         }
 
         $this->getConnectionRepository()->update($connections);
@@ -86,19 +82,18 @@ class ConnectionManager implements ConnectionManagerInterface
     }
 
     /**
-     * @param ConnectionCommand $command
-     * @return ConnectionManager
+     * {@inheritDoc}
      */
     public function disconnectBulk(ConnectionCommand $command)
     {
         $connectionsDescription = $command->getConnections();
-        $toDisconnectCollection = new ArrayCollection();
+        $toDisconnectCollection = array();
 
         foreach($connectionsDescription as $connection) {
            $matchedConnections = $this->filterConnectionsForDestroy($connection['source'], $connection['destination'], $connection['filters']);
 
             foreach($matchedConnections as $c) {
-                $toDisconnectCollection->add($c);
+                $toDisconnectCollection[] = $c;
             }
         }
         $this->getConnectionRepository()->destroy($toDisconnectCollection);
@@ -107,7 +102,7 @@ class ConnectionManager implements ConnectionManagerInterface
     }
 
     /**
-     * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
+     * {@inheritDoc}
      */
     public function destroy(ConnectionInterface $connection)
     {
@@ -131,18 +126,17 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function isConnectedTo(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
+        $this->filterValidator->validateFilters($filters);
+        
         $connectionsTo = $this->getConnectionsTo($destination, $filters);
-
-        $areConnected = false;
-
-        foreach ($connectionsTo as $connectionFrom) {
-            if (in_array($connectionFrom, $connectionsTo, true)) {
-                $areConnected = true;
-                break;
+        
+        foreach($connectionsTo as $connectionTo) {
+            if ($connectionTo->getSource() === $source) {
+                return true;
             }
         }
-
-        return $areConnected;
+        
+        return false;
     }
 
     /**

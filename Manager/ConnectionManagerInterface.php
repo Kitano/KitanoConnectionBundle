@@ -28,7 +28,7 @@ interface ConnectionManagerInterface
      *
      * @see ConnectionCommand
      * @param ConnectionCommand $command
-     * @return \Doctrine\Common\Collections\ArrayCollection
+     * @return array
      */
     public function connectBulk(ConnectionCommand $command);
 

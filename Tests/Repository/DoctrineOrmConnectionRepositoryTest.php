@@ -2,8 +2,6 @@
 
 namespace Kitano\ConnectionBundle\Tests\Repository;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Node;
 use Kitano\ConnectionBundle\Tests\OrmTestCase;
 use Kitano\ConnectionBundle\Repository\DoctrineOrmConnectionRepository;
@@ -99,7 +97,7 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
 
         $id = $connection->getId();
 
-        $this->assertEquals($this->repository, $this->repository->destroy(new ArrayCollection(array($connection))));
+        $this->assertEquals($this->repository, $this->repository->destroy(array($connection)));
         $this->assertNull($this->getEntityManager()->find(self::CONNECTION_CLASS, $id));
     }
 
@@ -197,6 +195,7 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         $this->assertTrue($this->repository->areConnected($node1, $node2, array('type' => self::CONNECTION_TYPE)));
         $this->assertTrue($this->repository->areConnected($node2, $node1, array('type' => self::CONNECTION_TYPE)));
         $this->assertTrue($this->repository->areConnected($node1, $node3, array('type' => self::CONNECTION_TYPE)));
+        $this->assertTrue($this->repository->areConnected($node3, $node1, array('type' => self::CONNECTION_TYPE)));
         $this->assertFalse($this->repository->areConnected($node2, $node3, array('type' => self::CONNECTION_TYPE)));
     }
 
@@ -221,6 +220,8 @@ class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements Connect
         $this->repository->update($connection1);
         $this->repository->update($connection2);
         $this->repository->update($connection3);
+        
+        $this->assertTrue(is_array($this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE))));
 
         $this->assertCount(3, $this->repository->getConnections($node1, array('type' => self::CONNECTION_TYPE)));
         $this->assertCount(2, $this->repository->getConnections($node2, array('type' => self::CONNECTION_TYPE)));
