@@ -111,11 +111,10 @@ class ArrayConnectionRepository implements ConnectionRepositoryInterface
         $connections = new ArrayCollection();
 
         foreach ($this->connections as $connection) {
-            if(array_key_exists('type', $filters)) {
-                if($connection->getType() != $filters['type']) {
-                    continue;
-                }
+            if(array_key_exists('type', $filters) && $connection->getType() !== $filters['type']) {
+                continue;
             }
+            
             if ($nodeA === $connection->getSource() && $nodeB === $connection->getDestination()) {
                 $connections[] = $connection;
             }
