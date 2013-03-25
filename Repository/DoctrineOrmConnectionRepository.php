@@ -98,13 +98,13 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     {
         $nodeInformations = $this->extractMetadata($node);
 
-        $qb = $this->createQueryBuilder('c');
+        $queryBuilder = $this->createQueryBuilder('connection');
 
-        $qb->select('c')
+        $queryBuilder->select('connection')
             ->where(
-                $qb->expr()->orX(
-                    $qb->expr()->andX("c.sourceObjectId = :nodeId", "c.sourceObjectClass = :nodeClass"),
-                    $qb->expr()->andX("c.destinationObjectId = :nodeId", "c.destinationObjectClass = :nodeClass")
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->andX("connection.sourceObjectId = :nodeId", "connection.sourceObjectClass = :nodeClass"),
+                    $queryBuilder->expr()->andX("connection.destinationObjectId = :nodeId", "connection.destinationObjectClass = :nodeClass")
                 )
             )
         ->setParameters(array(
@@ -113,11 +113,11 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
         ));
 
         if (array_key_exists('type', $filters)) {
-            $qb->andWhere("c.type = :type");
-            $qb->setParameter("type", $filters['type']);
+            $queryBuilder->andWhere("connection.type = :type");
+            $queryBuilder->setParameter("type", $filters['type']);
         }
 
-        $connections = $qb->getQuery()->getResult();
+        $connections = $queryBuilder->getQuery()->getResult();
 
         foreach ($connections as $connection) {
             $this->fillConnection($connection);
