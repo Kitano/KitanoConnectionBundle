@@ -178,18 +178,17 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $nodeA = new Node();
         $nodeB = new Node();
         $nodeC = new Node();
-        $nodeD = new Node();
 
         $this->connectionManager->connect($nodeA, $nodeB, "follow");
         $this->connectionManager->connect($nodeA, $nodeC, "like");
-        $this->connectionManager->connect($nodeA, $nodeD, "view");
 
         $this->assertTrue($this->connectionManager->areConnected($nodeA, $nodeB, array('type' => 'follow')));
-        $this->assertFalse($this->connectionManager->areConnected($nodeB, $nodeA, array('type' => 'follow')));
-        $this->assertFalse($this->connectionManager->areConnected($nodeA, $nodeC, array('type' => 'follow')));
-        $this->assertFalse($this->connectionManager->areConnected($nodeC, $nodeA, array('type' => 'like')));
+        $this->assertTrue($this->connectionManager->areConnected($nodeB, $nodeA, array('type' => 'follow')));
+        
+        $this->assertFalse($this->connectionManager->areConnected($nodeA, $nodeB, array('type' => 'like')));
+        $this->assertFalse($this->connectionManager->areConnected($nodeB, $nodeA, array('type' => 'like')));
     }
-
+    
     /**
      * @group manager
      */
