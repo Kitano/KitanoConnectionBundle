@@ -86,10 +86,18 @@ class DoctrineMongoDBConnectionRepository extends DocumentRepository implements 
      */
     public function areConnected(NodeInterface $nodeA, NodeInterface $nodeB, array $filters = array())
     {
-        $qb = $this->createQueryBuilder('Connection')
-            ->field("source")->references($nodeA)
-            ->field("destination")->references($nodeB)
-        ;
+        $qb = $this->createQueryBuilder('Connection');
+
+        $qb->addOr(
+            $qb->expr()
+                ->field("source")->references($nodeA)
+                ->field("destination")->references($nodeB)
+        )
+        ->addOr(
+            $qb->expr()
+                ->field("source")->references($nodeB)
+                ->field("destination")->references($nodeA)
+        ) ;
 
         if (array_key_exists('type', $filters)) {
             $qb->field('type')->equals($filters['type']);
