@@ -69,7 +69,7 @@ class ConnectionManager implements ConnectionManagerInterface
     public function connectBulk(ConnectionCommand $command)
     {
         $connections = array();
-        $connectionsDescription = $command->getCommands();
+        $connectionsDescription = $command->getConnectCommands();
         
         foreach($connectionsDescription as $connection) {
             $connection = $this->createConnection($connection['source'], $connection['destination'], $connection['type']);
@@ -86,7 +86,7 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function disconnectBulk(ConnectionCommand $command)
     {
-        $connectionsDescription = $command->getCommands();
+        $connectionsDescription = $command->getDisconnectCommands();
         $toDisconnectCollection = array();
 
         foreach($connectionsDescription as $connection) {

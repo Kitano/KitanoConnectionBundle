@@ -16,11 +16,6 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
      */
     private $connectionManager;
 
-    /**
-     * @var array
-     */
-    private $nodes;
-
     public function setUp()
     {
         $this->connectionManager = new ConnectionManager();
@@ -33,49 +28,6 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $mock = $this->getMockBuilder('Kitano\ConnectionBundle\Manager\FilterValidator')
             ->disableOriginalConstructor()
             ->getMock();
-
-        return $mock;
-    }
-
-    protected function generateNodes()
-    {
-        $this->nodes = array();
-
-        for($i=0; $i<=3; $i++) {
-            $node['source'] = new Node($i);
-            $node['destination'] = new Node($i);
-
-            $this->nodes[] = $node;
-        }
-    }
-
-    protected function getConnectionCommandMock($type)
-    {
-        foreach($this->nodes as $i => $node)
-        {
-            switch($type)
-            {
-                case 'connect' :
-                    $node['type'] = 'like';
-                    break;
-
-                case 'disconnect' :
-                    $node['filters'] = array('type' => 'like');
-                    break;
-            }
-
-            $this->nodes[$i] = $node;
-        }
-
-        $mock = $this->getMockBuilder('Kitano\ConnectionBundle\Manager\ConnectionCommand')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $mock
-            ->expects($this->any())
-            ->method('getCommands')
-            ->will($this->returnValue($this->nodes))
-        ;
 
         return $mock;
     }
@@ -267,19 +219,67 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($this->connectionManager->isConnectedTo($nodeA, $nodeB));
     }
+    
+    protected function getConnectionCommandMock(array $connectCommands = array(), array $disconnectCommands = array())
+    {
+        $mock = $this->getMockBuilder('Kitano\ConnectionBundle\Manager\ConnectionCommand')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mock
+            ->expects($this->any())
+            ->method('getConnectCommands')
+            ->will($this->returnValue($connectCommands));
+        
+        $mock
+            ->expects($this->any())
+            ->method('getDisconnectCommands')
+            ->will($this->returnValue($disconnectCommands));
+
+        return $mock;
+    }
+    
+    protected function generateCommands($numCommands)
+    {
+        $connectCommands = array();
+        $disconnectCommands = array();
+        
+        for($i = 0 ; $i <= $numCommands ; $i++) {
+            $source = new Node($i);
+            $destination = new Node($i + $numCommands); //Assign a different id
+            
+            $connectCommands[] = array(
+                'source' => $source,
+                'destination' => $destination,
+                'type' => 'like',
+            );
+            
+            $disconnectCommands[] = array(
+                'source' => $source,
+                'destination' => $destination,
+                'filters' => array(
+                    'type' => 'like',
+                ),
+            );
+        }
+        
+        return array(
+            'connectCommands' => $connectCommands,
+            'disconnectCommands' => $disconnectCommands,
+        );
+    }
 
     /**
      * @group manager
      */
     public function testConnectBulk()
     {
-        $this->generateNodes();
-
-        $connectionCommand = $this->getConnectionCommandMock('connect');
+        $commands = $this->generateCommands(3);
+        $connectionCommand = $this->getConnectionCommandMock($commands['connectCommands']);
 
         $this->connectionManager->connectBulk($connectionCommand);
 
-        foreach($connectionCommand->getCommands() as $command)
+        foreach($connectionCommand->getConnectCommands() as $command)
         {
             $this->assertTrue($this->connectionManager->areConnected($command['source'], $command['destination'], array('type' => $command['type'])));
         }
@@ -290,15 +290,13 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testDisconnectBulk()
     {
-        $this->generateNodes();
+        $commands = $this->generateCommands(3);
+        $connectionCommand = $this->getConnectionCommandMock($commands['connectCommands'], $commands['disconnectCommands']);
 
-        $this->connectionManager->connectBulk($this->getConnectionCommandMock('connect'));
-
-        $connectionCommand = $this->getConnectionCommandMock('disconnect');
-        
+        $this->connectionManager->connectBulk($connectionCommand);
         $this->connectionManager->disconnectBulk($connectionCommand);
 
-        foreach($connectionCommand->getCommands() as $command)
+        foreach($connectionCommand->getDisconnectCommands() as $command)
         {
             $this->assertFalse($this->connectionManager->areConnected($command['source'], $command['destination'], $command['filters']));
         }

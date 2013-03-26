@@ -6,25 +6,48 @@ use Kitano\ConnectionBundle\Model\NodeInterface;
 
 class ConnectionCommand
 {
-    protected $commands;
+    /**
+     * @var array
+     */
+    protected $connectCommands;
+    
+    /**
+     * @var array
+     */
+    protected $disconnectCommands;
 
     public function __construct()
     {
-        $this->commands = array();
+        $this->connectCommands = array();
+        $this->disconnectCommands = array();
     }
 
+    /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
+     * @param string $type
+     */
     public function addConnectCommand(NodeInterface $source, NodeInterface $destination, $type)
     {
-        $this->commands[] = array(
+        if(!is_string($type)) {
+            throw new \InvalidArgumentException('type must be a string');
+        }
+        
+        $this->connectCommands[] = array(
             'source' => $source,
             'destination' => $destination,
             'type' => $type
         );
     }
 
-    public function addDisconnectCommand(NodeInterface $source, NodeInterface $destination, $filters)
+    /**
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $source
+     * @param \Kitano\ConnectionBundle\Model\NodeInterface $destination
+     * @param array $filters
+     */
+    public function addDisconnectCommand(NodeInterface $source, NodeInterface $destination, array $filters = array())
     {
-        $this->commands[] = array(
+        $this->disconnectCommands[] = array(
             'source' => $source,
             'destination' => $destination,
             'filters' => $filters
@@ -34,8 +57,16 @@ class ConnectionCommand
     /**
      * @return array
      */
-    public function getCommands()
+    public function getConnectCommands()
     {
-        return $this->commands;
+        return $this->connectCommands;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDisconnectCommands()
+    {
+        return $this->disconnectCommands;
     }
 }

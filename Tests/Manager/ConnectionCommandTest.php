@@ -14,9 +14,30 @@ class ConnectionCommandTest extends \PHPUnit_Framework_TestCase
     {
         $connectionCommand = new ConnectionCommand();
         
-        $this->assertTrue(method_exists($connectionCommand, 'getCommands'));
+        $this->assertTrue(method_exists($connectionCommand, 'getConnectCommands'));
+        $this->assertTrue(method_exists($connectionCommand, 'getDisconnectCommands'));
         $this->assertTrue(method_exists($connectionCommand, 'addConnectCommand'));
         $this->assertTrue(method_exists($connectionCommand, 'addDisconnectCommand'));
+    }
+    
+    public static function wrongType()
+    {
+        return array(
+            array(42),
+            array(42.5),
+            array(new \stdClass()),
+            array(array()),
+        );
+    }
+    
+    /**
+     * @dataProvider wrongType
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddConnectWrongType($type)
+    {
+        $connectionCommand = new ConnectionCommand();
+        $connectionCommand->addConnectCommand(new Node(), new Node(), $type);
     }
     
     /**
@@ -35,7 +56,7 @@ class ConnectionCommandTest extends \PHPUnit_Framework_TestCase
             $connectionCommand->addConnectCommand($nodes[$i]['source'], $nodes[$i]['destination'], $nodes[$i]['type']);
         }
 
-        foreach($connectionCommand->getCommands() as $i => $command)
+        foreach($connectionCommand->getConnectCommands() as $i => $command)
         {
             $this->assertEquals($nodes[$i]['source'], $command['source']);
             $this->assertEquals($nodes[$i]['destination'], $command['destination']);
@@ -59,7 +80,7 @@ class ConnectionCommandTest extends \PHPUnit_Framework_TestCase
             $connectionCommand->addDisconnectCommand($nodes[$i]['source'], $nodes[$i]['destination'], $nodes[$i]['filters']);
         }
 
-        foreach($connectionCommand->getCommands() as $i => $command)
+        foreach($connectionCommand->getDisconnectCommands() as $i => $command)
         {
             $this->assertEquals($nodes[$i]['source'], $command['source']);
             $this->assertEquals($nodes[$i]['destination'], $command['destination']);
