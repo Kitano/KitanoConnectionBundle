@@ -37,13 +37,13 @@ interface ConnectionManagerInterface
      *
      * @see ConnectionCommand
      * @param ConnectionCommand $command
-     * @return $this
+     * @return ConnectionManagerInterface
      */
     public function disconnectBulk(ConnectionCommand $command);
 
     /**
      * @param \Kitano\ConnectionBundle\Model\ConnectionInterface $connection
-     * @return $this
+     * @return ConnectionManagerInterface
      */
     public function destroy(ConnectionInterface $connection);
 
