@@ -68,12 +68,11 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function connectBulk(ConnectionCommand $command)
     {
+        $connectCommands = $command->getConnectCommands();
         $connections = array();
-        $connectionsDescription = $command->getConnectCommands();
         
-        foreach($connectionsDescription as $connection) {
-            $connection = $this->createConnection($connection['source'], $connection['destination'], $connection['type']);
-            $connections[] = $connection;
+        foreach($connectCommands as $connectCommand) {
+            $connections[] = $this->createConnection($connectCommand['source'], $connectCommand['destination'], $connectCommand['type']);
         }
 
         $this->getConnectionRepository()->update($connections);
@@ -86,11 +85,11 @@ class ConnectionManager implements ConnectionManagerInterface
      */
     public function disconnectBulk(ConnectionCommand $command)
     {
-        $connectionsDescription = $command->getDisconnectCommands();
+        $disconnectCommands = $command->getDisconnectCommands();
         $toDisconnectCollection = array();
 
-        foreach($connectionsDescription as $connection) {
-           $matchedConnections = $this->filterConnectionsForDestroy($connection['source'], $connection['destination'], $connection['filters']);
+        foreach($disconnectCommands as $disconnectCommand) {
+           $matchedConnections = $this->filterConnectionsForDestroy($disconnectCommand['source'], $disconnectCommand['destination'], $disconnectCommand['filters']);
 
             foreach($matchedConnections as $c) {
                 $toDisconnectCollection[] = $c;
