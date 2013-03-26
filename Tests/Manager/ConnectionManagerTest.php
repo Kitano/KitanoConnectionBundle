@@ -73,7 +73,7 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
 
         $mock
             ->expects($this->any())
-            ->method('getConnections')
+            ->method('getCommands')
             ->will($this->returnValue($this->nodes))
         ;
 
@@ -279,7 +279,7 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->connectionManager->connectBulk($connectionCommand);
 
-        foreach($connectionCommand->getConnections() as $connection)
+        foreach($connectionCommand->getCommands() as $connection)
         {
             $this->assertTrue($this->connectionManager->areConnected($connection['source'], $connection['destination'], array('type' => $connection['type'])));
         }
@@ -298,7 +298,7 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
         $connectionCommand = $this->getConnectionCommandMock('disconnect');
         $this->connectionManager->disconnectBulk($connectionCommand);
 
-        foreach($connectionCommand->getConnections() as $connection)
+        foreach($connectionCommand->getCommands() as $connection)
         {
             $this->assertFalse($this->connectionManager->areConnected($connection['source'], $connection['destination'], $connection['filters']));
         }

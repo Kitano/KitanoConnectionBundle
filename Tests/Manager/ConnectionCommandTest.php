@@ -10,6 +10,19 @@ class ConnectionCommandTest extends \PHPUnit_Framework_TestCase
     /**
      * @group manager
      */
+    public function testPrototype()
+    {
+        $connectionCommand = new ConnectionCommand();
+        
+        $this->assertTrue(method_exists($connectionCommand, 'getCommands'));
+        $this->assertTrue(method_exists($connectionCommand, 'addConnectCommand'));
+        $this->assertTrue(method_exists($connectionCommand, 'addDisconnectCommand'));
+    }
+    
+    /**
+     * @group manager
+     * @depends testPrototype
+     */
     public function testAddConnectCommand()
     {
         $connectionCommand = new ConnectionCommand();
@@ -22,16 +35,17 @@ class ConnectionCommandTest extends \PHPUnit_Framework_TestCase
             $connectionCommand->addConnectCommand($nodes[$i]['source'], $nodes[$i]['destination'], $nodes[$i]['type']);
         }
 
-        foreach($connectionCommand->getConnections() as $i => $node)
+        foreach($connectionCommand->getCommands() as $i => $command)
         {
-            $this->assertEquals($nodes[$i]['source'], $node['source']);
-            $this->assertEquals($nodes[$i]['destination'], $node['destination']);
-            $this->assertEquals($nodes[$i]['type'], $node['type']);
+            $this->assertEquals($nodes[$i]['source'], $command['source']);
+            $this->assertEquals($nodes[$i]['destination'], $command['destination']);
+            $this->assertEquals($nodes[$i]['type'], $command['type']);
         }
     }
 
     /**
      * @group manager
+     * @depends testPrototype
      */
     public function testAddDisconnectCommand()
     {
@@ -45,11 +59,11 @@ class ConnectionCommandTest extends \PHPUnit_Framework_TestCase
             $connectionCommand->addDisconnectCommand($nodes[$i]['source'], $nodes[$i]['destination'], $nodes[$i]['filters']);
         }
 
-        foreach($connectionCommand->getConnections() as $i => $node)
+        foreach($connectionCommand->getCommands() as $i => $command)
         {
-            $this->assertEquals($nodes[$i]['source'], $node['source']);
-            $this->assertEquals($nodes[$i]['destination'], $node['destination']);
-            $this->assertEquals($nodes[$i]['filters'], $node['filters']);
+            $this->assertEquals($nodes[$i]['source'], $command['source']);
+            $this->assertEquals($nodes[$i]['destination'], $command['destination']);
+            $this->assertEquals($nodes[$i]['filters'], $command['filters']);
         }
     }
 }

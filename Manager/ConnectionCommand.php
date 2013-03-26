@@ -6,16 +6,16 @@ use Kitano\ConnectionBundle\Model\NodeInterface;
 
 class ConnectionCommand
 {
-    protected $connections;
+    protected $commands;
 
     public function __construct()
     {
-        $this->connections = array();
+        $this->commands = array();
     }
 
     public function addConnectCommand(NodeInterface $source, NodeInterface $destination, $type)
     {
-        $this->connections[] = array(
+        $this->commands[] = array(
             'source' => $source,
             'destination' => $destination,
             'type' => $type
@@ -24,15 +24,18 @@ class ConnectionCommand
 
     public function addDisconnectCommand(NodeInterface $source, NodeInterface $destination, $filters)
     {
-        $this->connections[] = array(
+        $this->commands[] = array(
             'source' => $source,
             'destination' => $destination,
             'filters' => $filters
         );
     }
 
-    public function getConnections()
+    /**
+     * @return array
+     */
+    public function getCommands()
     {
-        return $this->connections;
+        return $this->commands;
     }
 }
