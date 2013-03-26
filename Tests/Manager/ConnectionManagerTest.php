@@ -279,9 +279,9 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->connectionManager->connectBulk($connectionCommand);
 
-        foreach($connectionCommand->getCommands() as $connection)
+        foreach($connectionCommand->getCommands() as $command)
         {
-            $this->assertTrue($this->connectionManager->areConnected($connection['source'], $connection['destination'], array('type' => $connection['type'])));
+            $this->assertTrue($this->connectionManager->areConnected($command['source'], $command['destination'], array('type' => $command['type'])));
         }
     }
 
@@ -292,15 +292,15 @@ class ConnectionManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->generateNodes();
 
-        $connectionCommand = $this->getConnectionCommandMock('connect');
-        $this->connectionManager->connectBulk($connectionCommand);
+        $this->connectionManager->connectBulk($this->getConnectionCommandMock('connect'));
 
         $connectionCommand = $this->getConnectionCommandMock('disconnect');
+        
         $this->connectionManager->disconnectBulk($connectionCommand);
 
-        foreach($connectionCommand->getCommands() as $connection)
+        foreach($connectionCommand->getCommands() as $command)
         {
-            $this->assertFalse($this->connectionManager->areConnected($connection['source'], $connection['destination'], $connection['filters']));
+            $this->assertFalse($this->connectionManager->areConnected($command['source'], $command['destination'], $command['filters']));
         }
     }
 }
