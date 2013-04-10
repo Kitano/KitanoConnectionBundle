@@ -2,14 +2,60 @@
 
 namespace Kitano\ConnectionBundle\Entity;
 
-use Kitano\ConnectionBundle\Proxy\DoctrineOrmConnection;
+use Kitano\ConnectionBundle\Model\Connection as BaseConnection;
 
-class Connection extends DoctrineOrmConnection
+abstract class Connection extends BaseConnection
 {
-    private $id;
+    protected $sourceObjectClass;
+    protected $sourceObjectId;
+    protected $destinationObjectClass;
+    protected $destinationObjectId;
 
-    public function getId()
+    public function getSourceObjectClass()
     {
-        return $this->id;
+        return $this->sourceObjectClass;
+    }
+
+    public function setSourceObjectClass($value)
+    {
+        $this->sourceObjectClass = $value;
+
+        return $this;
+    }
+
+    public function getSourceObjectId()
+    {
+        return $this->sourceObjectId;
+    }
+
+    public function setSourceObjectId($value)
+    {
+        $this->sourceObjectId = $value;
+
+        return $this;
+    }
+
+    public function getDestinationObjectClass()
+    {
+        return $this->destinationObjectClass;
+    }
+
+    public function setDestinationObjectClass($value)
+    {
+        $this->destinationObjectClass = $value;
+
+        return $this;
+    }
+
+    public function getDestinationObjectId()
+    {
+        return $this->destinationObjectId;
+    }
+
+    public function setDestinationObjectId($value)
+    {
+        $this->destinationObjectId = $value;
+
+        return $this;
     }
 }

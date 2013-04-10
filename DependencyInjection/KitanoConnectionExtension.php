@@ -37,9 +37,6 @@ class KitanoConnectionExtension extends Extension
 
             if (!$container->hasParameter('kitano_connection.managed_class.connection')) {
                 switch ($config['persistence']['type']) {
-                    case 'doctrine_orm':
-                        $container->setParameter('kitano_connection.managed_class.connection', 'Kitano\ConnectionBundle\Entity\Connection');
-                        break;
                     case 'doctrine_mongodb':
                         $container->setParameter('kitano_connection.managed_class.connection', 'Kitano\ConnectionBundle\Document\Connection');
                         break;

@@ -82,7 +82,7 @@ interface ConnectionManagerInterface
      * @param NodeInterface $node
      * @param array         $filters
      *
-     * @return array
+     * @return array|ConnectionInterface[]
      */
     public function getConnectionsTo(NodeInterface $node, array $filters = array());
 
@@ -90,7 +90,7 @@ interface ConnectionManagerInterface
      * @param NodeInterface $node
      * @param array         $filters
      *
-     * @return array
+     * @return array|ConnectionInterface[]
      */
     public function getConnectionsFrom(NodeInterface $node, array $filters = array());
 
@@ -98,7 +98,7 @@ interface ConnectionManagerInterface
      * @param NodeInterface $node
      * @param array         $filters
      *
-     * @return array
+     * @return array|ConnectionInterface[]
      */
     public function getConnections(NodeInterface $node, array $filters = array());
 }

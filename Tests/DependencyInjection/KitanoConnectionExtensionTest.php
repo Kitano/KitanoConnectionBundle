@@ -77,30 +77,14 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
         $this->container->compile();
     }
 
-    public function testOrmPersistenceDefaultManagedClass()
-    {
-        $config = array(
-            "kitano_connection" => array (
-                "persistence" => array (
-                    "type" => "doctrine_orm",
-                ),
-            ),
-        );
-
-        $this->extension->load($config, $this->container);
-        $this->container->compile();
-
-        $this->assertEquals($this->container->getParameter('kitano_connection.managed_class.connection'), 'Kitano\ConnectionBundle\Entity\Connection');
-    }
-
-    public function testOrmPersistenceCustomManagedClass()
+    public function testOrmPersistenceManagedClass()
     {
         $config = array(
             "kitano_connection" => array (
                 "persistence" => array (
                     "type" => "doctrine_orm",
                     "managed_class" => array (
-                        "connection" => "My\Entity\Connection",
+                        "connection" => "My\\Entity\\Connection",
                     ),
                 ),
             ),
@@ -135,7 +119,7 @@ class KitanoConnectionExtensionTest extends \PHPUnit_Framework_TestCase
                 "persistence" => array (
                     "type" => "doctrine_mongodb",
                     "managed_class" => array (
-                        "connection" => "My\Document\Connection",
+                        "connection" => "My\\Document\\Connection",
                     ),
                 ),
             ),

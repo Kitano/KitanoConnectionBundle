@@ -63,6 +63,14 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end()
+            ->validate()
+                ->ifTrue(function($v) {
+                    return 'doctrine_orm' === $v['persistence']['type']
+                        && (!isset($v['persistence']['managed_class']) ||
+                            !isset($v['persistence']['managed_class']['connection']));
+                })
+                ->thenInvalid('You need to specify a "managed_class" when using doctrine_orm persistence type.')
+            ->end()
         ;
     }
 }

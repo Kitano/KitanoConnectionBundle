@@ -9,7 +9,7 @@ use Kitano\ConnectionBundle\Model\NodeInterface;
 
 class DoctrineOrmConnectionRepositoryTest extends OrmTestCase implements ConnectionRepositoryTestInterface
 {
-    const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Entity\Connection';
+    const CONNECTION_CLASS = 'Kitano\ConnectionBundle\Tests\Fixtures\Doctrine\Entity\Connection';
     const CONNECTION_TYPE = 'follow';
 
     /**

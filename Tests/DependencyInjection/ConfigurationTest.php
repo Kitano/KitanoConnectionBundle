@@ -24,7 +24,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         ));
     }
 
-    public function testDoctrineOrmPersistenceType()
+    /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     */
+    public function testDoctrineOrmPersistenceTypeWithoutManagedClassFails()
     {
         $processor = new Processor();
         $configuration = new Configuration(array());
@@ -36,8 +39,32 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 ),
             )
         ));
+    }
 
-        $this->assertEquals(array('type' => 'doctrine_orm'), $config['persistence']);
+    public function testDoctrineOrmPersistenceType()
+    {
+        $processor = new Processor();
+        $configuration = new Configuration(array());
+
+        $config = $processor->processConfiguration($configuration, array(
+            array(
+                'persistence' => array(
+                    'type' => 'doctrine_orm',
+                    'managed_class' => array(
+                        'connection' => 'My\Entity\Connection',
+                    )
+                ),
+            )
+        ));
+
+        $expected = array(
+            'type' => 'doctrine_orm',
+            'managed_class' => array(
+                'connection' => 'My\Entity\Connection',
+            ),
+        );
+
+        $this->assertEquals($expected, $config['persistence']);
     }
 
     public function testDoctrineMongoDbPersistenceType()

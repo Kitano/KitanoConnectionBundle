@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
 
 use Kitano\ConnectionBundle\Model\ConnectionInterface;
-use Kitano\ConnectionBundle\Proxy\DoctrineOrmConnection;
+use Kitano\ConnectionBundle\Entity\Connection;
 use Kitano\ConnectionBundle\Model\NodeInterface;
 use Kitano\ConnectionBundle\Exception\NotSupportedNodeException;
 
@@ -255,11 +255,11 @@ class DoctrineOrmConnectionRepository extends EntityRepository implements Connec
     }
 
     /**
-     * @param DoctrineOrmConnection $connection
+     * @param Connection $connection
      *
-     * @return DoctrineOrmConnection
+     * @return Connection
      */
-    protected function fillConnection(DoctrineOrmConnection $connection)
+    protected function fillConnection(Connection $connection)
     {
         $source = $this->_em->getRepository($connection->getSourceObjectClass())->find($connection->getSourceObjectId());
         $destination = $this->_em->getRepository($connection->getDestinationObjectClass())->find($connection->getDestinationObjectId());
